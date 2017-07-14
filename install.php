@@ -11,9 +11,10 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
     $email = $_POST["email"];
     $pass = $_POST["pass"];
     $secret = $_POST["secret"];
-    $modulPlyn = $_POST["plyn"];
-    $modulEE = $_POST["ee"];
-    $modulVoda = $_POST["voda"];
+    $moduleGas = $_POST["gas"];
+    $moduleEE = $_POST["ee"];
+    $moduleWater = $_POST["water"];
+    $moduleHotWater = $_POST["hotWater"];
     $myfile = fopen("config.php", "w") or die("Unable to open file!");
     $txt = "
         <?php
@@ -22,30 +23,54 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
 \$dbusername = \"$dbusername\";
 \$dbpassword = \"$dbpassword\";
 \$dbname = \"$dbname\";
+\$con = mysqli_connect(\$dbservername, \$dbusername, \$dbpassword, \$dbname);
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-07-02\";
-\$version = \"1.1\";
+\$releaseDate = \"2017-07-14\";
+\$version = \"2.0\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
-\$modulPlyn=";
-    if ($modulPlyn == true)
+
+\$modules=array();";
+    if ($moduleGas == true) {
+        $txt.="array_push(\$modules, \"gas\");";
+    }
+    if ($moduleEE == true) {
+        $txt.="array_push(\$modules, \"ee\");";
+    }
+    if ($moduleWater == true) {
+        $txt.="array_push(\$modules, \"water\");";
+    }
+    if ($moduleHotWater == true) {
+        $txt.="array_push(\$modules, \"hotWater\");";
+    }
+
+
+    $txt.= "\$moduleGas=";
+    if ($moduleGas == true) {
         $txt.="true;";
-    else
+    } else {
         $txt.="false;";
-    $txt .= "
-        \$modulEE=";
-    if ($modulEE == true)
+    }
+    $txt .= "\$moduleEE=";
+    if ($moduleEE == true) {
         $txt.="true;";
-    else
+    } else {
         $txt.="false;";
-    $txt .= "
-        \$modulVoda=";
-    if ($modulVoda == true)
+    }
+    $txt .= "\$moduleWater=";
+    if ($moduleWater == true) {
         $txt.="true;";
-    else
+    } else {
         $txt.="false;";
+    }
+    $txt .= "\$moduleHotWater=";
+    if ($moduleHotWater == true) {
+        $txt.="true;";
+    } else {
+        $txt.="false;";
+    }
 
     $txt .="
 
@@ -60,15 +85,15 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
     $tmp.=$secret;
 
 
-    $heslo = md5($tmp);
+    $password = md5($tmp);
 
-    $sql = "CREATE TABLE `ee` (
+$sql = "CREATE TABLE `ee` (
   `id` int(11) NOT NULL,
-  `datum` date NOT NULL,
-  `rok` year(4) NOT NULL,
-  `stav` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `year` year(4) NOT NULL,
+  `score` int(11) NOT NULL,
   `inicial` tinyint(1) DEFAULT NULL,
-  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL
+  `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
@@ -89,94 +114,94 @@ if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "CREATE TABLE `plyn` (
+$sql = "CREATE TABLE `gas` (
   `id` int(11) NOT NULL,
-  `datum` date NOT NULL,
-  `rok` year(4) NOT NULL,
-  `stav` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `year` year(4) NOT NULL,
+  `score` int(11) NOT NULL,
   `inicial` tinyint(1) DEFAULT NULL,
-  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL
+  `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `plyn`
+$sql = "ALTER TABLE `gas`
   ADD PRIMARY KEY (`id`);";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `plyn`
+$sql = "ALTER TABLE `gas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "CREATE TABLE `voda` (
+$sql = "CREATE TABLE `water` (
   `id` int(11) NOT NULL,
-  `datum` date NOT NULL,
-  `rok` year(4) NOT NULL,
-  `stav` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `year` year(4) NOT NULL,
+  `score` int(11) NOT NULL,
   `inicial` tinyint(1) DEFAULT NULL,
-  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL
+  `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `voda`
+$sql = "ALTER TABLE `water`
   ADD PRIMARY KEY (`id`);";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `voda`
+$sql = "ALTER TABLE `water`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
   
-$sql = "CREATE TABLE `vodaTepla` (
+$sql = "CREATE TABLE `hotWater` (
   `id` int(11) NOT NULL,
-  `datum` date NOT NULL,
-  `rok` year(4) NOT NULL,
-  `stav` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `year` year(4) NOT NULL,
+  `score` int(11) NOT NULL,
   `inicial` tinyint(1) DEFAULT NULL,
-  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL
+  `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `vodaTepla`
+$sql = "ALTER TABLE `hotWater`
   ADD PRIMARY KEY (`id`);";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `vodaTepla`
+$sql = "ALTER TABLE `hotWater`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "CREATE TABLE `pouzivatelia` (
+$sql = "CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `meno` text COLLATE utf8_slovak_ci NOT NULL,
-  `heslo` text COLLATE utf8_slovak_ci NOT NULL,
+  `username` text COLLATE utf8_slovak_ci NOT NULL,
+  `password` text COLLATE utf8_slovak_ci NOT NULL,
   `email` text COLLATE utf8_slovak_ci NOT NULL,
-  `skupina` tinyint(4) NOT NULL,
-  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL,
+  `groups` tinyint(4) NOT NULL,
+  `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL,
   `lastSession` text COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
@@ -184,7 +209,7 @@ if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `pouzivatelia`
+$sql = "ALTER TABLE `users`
   ADD UNIQUE KEY `id_2` (`id`),
   ADD KEY `id` (`id`);";
 
@@ -192,7 +217,7 @@ if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `pouzivatelia`
+$sql = "ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
 if (!mysqli_query($con, $sql)) {
@@ -202,14 +227,14 @@ if (!mysqli_query($con, $sql)) {
 $sql = "CREATE TABLE `tempStat` (
   `id` int(11) NOT NULL,
   `user` varchar(10) COLLATE utf8_slovak_ci NOT NULL,
-  `stavPlyn` int(11) NOT NULL,
-  `sumDniPlyn` int(11) NOT NULL,
-  `stavEE` int(11) NOT NULL,
-  `sumDniEE` int(11) NOT NULL,
-  `stavVoda` int(11) NOT NULL,
-  `sumDniVoda` int(11) NOT NULL,
-  `stavVodaTepla` int(11) NOT NULL,
-  `sumDniVodaTepla` int(11) NOT NULL
+  `scoreGas` int(11) NOT NULL,
+  `SumScoreGas` int(11) NOT NULL,
+  `ScoreEe` int(11) NOT NULL,
+  `SumScoreEe` int(11) NOT NULL,
+  `ScoreWater` int(11) NOT NULL,
+  `SumScoreWater` int(11) NOT NULL,
+  `ScoreHotWater` int(11) NOT NULL,
+  `SumScoreHotWater` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
@@ -223,32 +248,32 @@ if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "CREATE TABLE `udajePlatieb` (
+$sql = "CREATE TABLE `paymentRecords` (
   `id` int(11) NOT NULL,
-  `druh` text COLLATE utf8_slovak_ci NOT NULL,
-  `zakCislo` bigint(12) NOT NULL,
-  `platba` text COLLATE utf8_slovak_ci NOT NULL,
-  `tarifa` text COLLATE utf8_slovak_ci NOT NULL,
-  `ucty` text COLLATE utf8_slovak_ci NOT NULL,
-  `VS` bigint(12) NOT NULL,
-  `KS` int(11) NOT NULL,
+  `kind` text COLLATE utf8_slovak_ci NOT NULL,
+  `customerNumber` bigint(12) NOT NULL,
+  `payment` text COLLATE utf8_slovak_ci NOT NULL,
+  `tariff` text COLLATE utf8_slovak_ci NOT NULL,
+  `bankAccounts` text COLLATE utf8_slovak_ci NOT NULL,
+  `Variable` bigint(12) NOT NULL,
+  `Constant` int(11) NOT NULL,
   `EIC` text COLLATE utf8_slovak_ci NOT NULL,
-  `odberMiesto` bigint(12) NOT NULL,
-  `miestoSpotreby` bigint(12) NOT NULL
+  `deliveryPoint` bigint(12) NOT NULL,
+  `consumptionPoint` bigint(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `udajePlatieb`
+$sql = "ALTER TABLE `paymentRecords`
   ADD PRIMARY KEY (`id`);";
 
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
 
-$sql = "ALTER TABLE `udajePlatieb`
+$sql = "ALTER TABLE `paymentRecords`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
 if (!mysqli_query($con, $sql)) {
@@ -256,12 +281,12 @@ if (!mysqli_query($con, $sql)) {
   }
   $tmp = $pass;
   $tmp.=$secret;
-  $heslo = md5($tmp);
-$sql = "INSERT INTO pouzivatelia(meno, heslo, email, skupina, poznamka, lastSession) VALUES('$user', '$heslo', '$email', '1', '', '')";
+  $password = md5($tmp);
+$sql = "INSERT INTO users(username, password, email, groups, note, lastSession) VALUES('$user', '$password', '$email', '1', '', '')";
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
 }
-$sql = "INSERT INTO tempStat(id, user, stavPlyn, sumDniPlyn, stavEE, sumDniEE, stavVoda, sumDniVoda, stavVodaTepla, sumDniVodaTepla) VALUES('1', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
+$sql = "INSERT INTO tempStat(id, user, ScoreGas, SumScoreGas, ScoreEe, SumScoreEe, ScoreWater, SumScoreWater, ScoreHotWater, SumScoreHotWater) VALUES('1', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
 }
@@ -288,23 +313,23 @@ Login user <br><input type=\"text\" name=\"user\" size=\"40\" placeholder=\"Logi
 email <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\"><br><br>
 Login Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
 <br><input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
-            Ktoré moduly zapnúť?
-<input type=\"checkbox\" name=\"plyn\" value=\"true\"";
-    if ($modulPlyn == true)
+            Which modules you want to use?
+<input type=\"checkbox\" name=\"gas\" value=\"true\"";
+    if ($moduleGas == true)
         echo "checked=\"checked\"";
-    echo"> Plyn<br>
+    echo"> Gas<br>
 <input type=\"checkbox\" name=\"ee\" value=\"true\" ";
-    if ($modulEE == true)
+    if ($moduleEE == true)
         echo "checked=\"checked\"";
-    echo"> Elektrika<br>
-<input type=\"checkbox\" name=\"voda\" value=\"true\" ";
-    if ($modulVoda == true)
+    echo"> Electricity<br>
+<input type=\"checkbox\" name=\"water\" value=\"true\" ";
+    if ($moduleWater == true)
         echo "checked=\"checked\"";
-    echo"> Voda<br>
-    <input type=\"checkbox\" name=\"voda\" value=\"true\" ";
-    if ($modulVodaTepla == true)
+    echo"> Water<br>
+    <input type=\"checkbox\" name=\"hotWater\" value=\"true\" ";
+    if ($moduleHotWater == true)
         echo "checked=\"checked\"";
-    echo">Teplá voda<br>; ";
+    echo">Hot water<br>; ";
 
 
     echo "
