@@ -24,7 +24,8 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
 \$dbname = \"$dbname\";
 
 \$secret = \"$secret\";
-\$version = \"1.0\";
+\$releaseDate = \"2017-07-02\";
+\$version = \"1.1\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -141,6 +142,33 @@ $sql = "ALTER TABLE `voda`
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
   }
+  
+$sql = "CREATE TABLE `vodaTepla` (
+  `id` int(11) NOT NULL,
+  `datum` date NOT NULL,
+  `rok` year(4) NOT NULL,
+  `stav` int(11) NOT NULL,
+  `inicial` tinyint(1) DEFAULT NULL,
+  `poznamka` varchar(300) COLLATE utf8_slovak_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
+
+if (!mysqli_query($con, $sql)) {
+   die('Error: ' . mysqli_error($con));
+  }
+
+$sql = "ALTER TABLE `vodaTepla`
+  ADD PRIMARY KEY (`id`);";
+
+if (!mysqli_query($con, $sql)) {
+   die('Error: ' . mysqli_error($con));
+  }
+
+$sql = "ALTER TABLE `vodaTepla`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+
+if (!mysqli_query($con, $sql)) {
+   die('Error: ' . mysqli_error($con));
+  }
 
 $sql = "CREATE TABLE `pouzivatelia` (
   `id` int(11) NOT NULL,
@@ -179,7 +207,9 @@ $sql = "CREATE TABLE `tempStat` (
   `stavEE` int(11) NOT NULL,
   `sumDniEE` int(11) NOT NULL,
   `stavVoda` int(11) NOT NULL,
-  `sumDniVoda` int(11) NOT NULL
+  `sumDniVoda` int(11) NOT NULL,
+  `stavVodaTepla` int(11) NOT NULL,
+  `sumDniVodaTepla` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
 
 if (!mysqli_query($con, $sql)) {
@@ -231,7 +261,7 @@ $sql = "INSERT INTO pouzivatelia(meno, heslo, email, skupina, poznamka, lastSess
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
 }
-$sql = "INSERT INTO tempStat(id, user, stavPlyn, sumDniPlyn, stavEE, sumDniEE, stavVoda, sumDniVoda) VALUES('1', '0', '0', '0', '0', '0', '0', '0')";
+$sql = "INSERT INTO tempStat(id, user, stavPlyn, sumDniPlyn, stavEE, sumDniEE, stavVoda, sumDniVoda, stavVodaTepla, sumDniVodaTepla) VALUES('1', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
 if (!mysqli_query($con, $sql)) {
    die('Error: ' . mysqli_error($con));
 }
@@ -270,7 +300,11 @@ Login Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
 <input type=\"checkbox\" name=\"voda\" value=\"true\" ";
     if ($modulVoda == true)
         echo "checked=\"checked\"";
-    echo"> Voda<br>;";
+    echo"> Voda<br>
+    <input type=\"checkbox\" name=\"voda\" value=\"true\" ";
+    if ($modulVodaTepla == true)
+        echo "checked=\"checked\"";
+    echo">Teplá voda<br>; ";
 
 
     echo "

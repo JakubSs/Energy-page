@@ -79,12 +79,16 @@ and open the template in the editor.
                             $sumDniEE = $row['sumDniEE'];
                             $stavVoda = $row['stavVoda'];
                             $sumDniVoda = $row['sumDniVoda'];
+                            $stavVodaTepla = $row['stavVodaTepla'];
+                            $sumDniVodaTepla = $row['sumDniVodaTepla'];
 
                             if($modulPlyn==true){echo "<tr><td>" . $stavPlyn . " m<sup>3</sup></td><td>" . ($stavPlyn / $sumDniPlyn) . " m<sup>3</sup></td><td>" . (($stavPlyn / $sumDniPlyn) * 365) . " m<sup>3</sup></td>
                             </tr>";}
                             if($modulEE==true){echo "<tr><td>" . $stavEE . " kWh</td><td>" . ($stavEE / $sumDniEE) . " kWh</td><td>" . (($stavEE / $sumDniEE) * 365) . " kWh</td>
                             </tr>";}
                             if($modulVoda==true){echo "<tr><td>" . $stavVoda . " m<sup>3</sup></td><td>" . ($stavVoda / $sumDniVoda) . " m<sup>3</sup></td><td>" . (($stavVoda / $sumDniVoda) * 365) . " m<sup>3</sup></td>
+                            </tr>";}
+                            if($modulVodaTepla==true){echo "<tr><td>" . $stavVodaTepla . " m<sup>3</sup></td><td>" . ($stavVodaTepla / $sumDniVodaTepla) . " m<sup>3</sup></td><td>" . (($stavVodaTepla / $sumDniVodaTepla) * 365) . " m<sup>3</sup></td>
                             </tr>";}
                         }echo "</table> </fieldset>";
                     
@@ -96,7 +100,10 @@ and open the template in the editor.
                     echo "<br><br>Graf spotreby EE priemer";include("graphEEPriemer.php");}
                     if($modulVoda==true){
                     echo "<br><br>Graf spotreby voda";include("graphVoda.php");
-                    echo "<br><br>Graf spotreby voda priemer";include("graphVodaPriemer.php");}
+                    echo "<br><br>Graf spotreby voda  priemer";include("graphVodaPriemer.php");}
+                    if($modulVodaTepla==true){
+                    echo "<br><br>Graf spotreby voda TEPLÁ";include("graphVodaTepla.php");
+                    echo "<br><br>Graf spotreby voda TEPLÁ priemer";include("graphVodaTeplaPriemer.php");}
                         
                         
                         

@@ -9,8 +9,9 @@ if (isset($_COOKIE["PHPSESSID"]) && isset($_COOKIE["meno"]) && !isset($_POST["st
         ";
         if ($modulPlyn==true){echo"<input type=\"radio\" name=\"energia\" value=\"plyn\"> Plyn<br>";}
         if ($modulEE==true){echo"<input type=\"radio\" name=\"energia\" value=\"ee\"> Elektrika<br>";}
-        if ($modulVoda==true){echo"<input type=\"radio\" name=\"energia\" value=\"voda\"> Voda<br><br>";}
-        echo "Stav v celých m<sup>3</sup> zaokr. nahor:<br><input type=\"number\" name=\"stav\" size=\"10\"  placeholder=\"Napr 254,325 sa zapíše ako 255\" style=\"width: 20em;\"><br>
+        if ($modulVoda==true){echo"<input type=\"radio\" name=\"energia\" value=\"voda\"> Voda<br>";}
+        if ($modulVodaTepla==true){echo"<input type=\"radio\" name=\"energia\" value=\"vodaTepla\">Teplá Voda<br><br>";}
+        echo "Stav v celých číslach zaokr. nahor:<br><input type=\"number\" name=\"stav\" size=\"10\"  placeholder=\"Napr 254,325m<sup>3</sup> sa zapíše ako 255\" style=\"width: 20em;\"><br>
         <div style=\"display: none !important;\">Inicial <input type=\"checkbox\" name=\"inicial\" value=\"1\"></div><br>
         Poznamka <br><input type=\"text\" name=\"poznamka\" size=\"60\" placeholder=\"Poznámka\"><br><br>
         <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"Pridaj\" align=\"right\"><div>

@@ -12,6 +12,7 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
     $modulPlyn=$_POST["plyn"];
     $modulEE=$_POST["ee"];
     $modulVoda=$_POST["voda"];
+    $modulVodaTepla=$_POST["vodaTepla"];
     $secret=$_POST["secret"];
     $myfile = fopen("config.php", "w") or die("Unable to open file!");
     $txt = "
@@ -23,18 +24,19 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
 \$dbname = \"$dbname\";
 
 \$secret = \"$secret\";
-\$version = \"1.0\";
+\$releaseDate = \"2017-07-02\";
+\$version = \"1.1\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
 \$modulPlyn=";
     if ($modulPlyn==true) $txt.="true;";else $txt.="false;";
-    $txt .= "
-        \$modulEE=";
+    $txt .= "\$modulEE=";
     if ($modulEE==true) $txt.="true;";else $txt.="false;";
-    $txt .= "
-        \$modulVoda=";
+    $txt .= "\$modulVoda=";
     if ($modulVoda==true) $txt.="true;";else $txt.="false;";
+    $txt .= "\$modulVodaTepla=";
+    if ($modulVodaTepla==true) $txt.="true;";else $txt.="false;";
     
 $txt .="
 
@@ -62,6 +64,7 @@ Ktoré moduly zapnúť?
 <input type=\"checkbox\" name=\"plyn\" value=\"true\"";if($modulPlyn==true) echo "checked=\"checked\""; echo"> Plyn<br>
 <input type=\"checkbox\" name=\"ee\" value=\"true\" ";if($modulEE==true) echo "checked=\"checked\""; echo"> Elektrika<br>
 <input type=\"checkbox\" name=\"voda\" value=\"true\" ";if($modulVoda==true) echo "checked=\"checked\""; echo"> Voda<br>
+<input type=\"checkbox\" name=\"vodaTepla\" value=\"true\" ";if($modulVodaTepla==true) echo "checked=\"checked\""; echo"> Teplá voda<br>
 <br><input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
 
 <input id=\"button\" type=\"submit\" name=\"submit\" value=\"Zmeň\">

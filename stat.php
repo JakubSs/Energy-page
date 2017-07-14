@@ -234,6 +234,82 @@
                 echo "<br><br><br>";}
 
 ///////
+if($modulVodaTepla==true){
+                $sql = "SELECT * FROM vodaTepla";
+               
+                if (mysqli_connect_errno($con)) {
+                    echo "failed connection!";
+                } else {
+                    $result = mysqli_query($con, $sql);
+///////
+                    ?>
+
+                    <fieldset><legend>Stav Teplá voda</legend>
+                        <table border="1">
+                            <tr>
+                                <th>ID</th>
+                                <th>Dátum</th>
+                                <th>Dní</th>
+                                <th>Stav</th>
+                                <th>Spotreba</th>
+                                <th>Denný priemer od posledného merania</th>
+                                <th>Inicial</th>
+                                <th>Poznámka</th>      
+                            </tr><?php
+                $sumVodaTepla = 0;
+                $sumDniVodaTepla = 0;
+                $tempVodaTepla = 0;
+                $lastVodaTepla = 0;
+                $lastDateTepla = 0;
+                $tempDniTepla = 0;
+                while ($row = mysqli_fetch_array($result)) {
+
+
+                    $id = $row['id'];
+
+
+//$inicial="";
+                    if ($row['inicial'] == 0) {
+                        $inicial = "nie";
+                    } else {
+                        $inicial = "ano";
+                    }
+
+                    $tempVodaTepla = $row['stav'] - $lastvodaTepla;
+                    if ($row['inicial'] == 1) {
+                        $tempVodaTepla = 0;
+                    }
+                    $sumVodaTepla+=$tempVodaTepla;
+                    $tempDni = $row['datum'];
+                    $days_between = $tempDni - $lastdate;
+                   
+
+                    $start = strtotime($lastdate);
+                    $end = strtotime($tempDni);
+
+                    $days_between = ceil(abs($end - $start) / 86400);
+                   
+                    if ($row['inicial'] == 1) {
+                        $sumDniVodaTepla = 0;
+                        $days_between = 0;
+                    } else {
+                        $sumDniVodaTepla+=$days_between;
+                    }
+                   
+                    if (($tempVodaTepla/$days_between)>$dennyPriemerVodaTepla){$a="style=\"color: red;\"";}else{$a="style=\"color: blue;\"";}
+                    echo "<tr><td>" . $row['id'] . "</td><td>" . $row['datum'] . "</td><td>" . $days_between . "</td><td>" . $row['stav'] . "m<sup>3</sup></td><td>" . $tempVodaTepla
+                    . "m<sup>3</sup></td><td ".$a.">".($tempVodaTepla/$days_between)." m<sup>3</sup></td><td>" . $inicial . "</td><td>" . $row['poznamka'] . "</td>
+</tr>";
+                    $lastvodaTepla = $row['stav'];
+                    $lastdateTepla = $row['datum'];
+                }
+                echo "</fieldset></table>";
+                echo $sumVodaTepla."m<sup>3</sup> za ";
+                echo $sumDniVodaTepla." dní, s denným priemerom: ".$dennyPriemerVodaTepla." m<sup>3</sup>";
+
+echo "<br><br><br>";}
+
+///////
             }
 
 /////
@@ -242,6 +318,7 @@
                 if ($modulPlyn==true) {$sql.=", stavPlyn=$sumPlyn, sumDniPlyn=$sumDniPlyn";}
                 if ($modulEE==true) {$sql.=", stavEE=$sumEE, sumDniEE=$sumDniEE";}
                 if ($modulVoda==true) {$sql.=", stavVoda=$sumVoda, sumDniVoda=$sumDniVoda";}
+                if ($modulVodaTepla==true) {$sql.=", stavVodaTepla=$sumVodaTepla, sumDniVoda=$sumDniVodaTepla";}
                 $sql .= " WHERE id='1'";
                 if (!mysqli_query($con, $sql)) {
                     die('Error: ' . mysqli_error($con));
@@ -252,7 +329,7 @@
     echo "<a href='logout.php'>Odhlasit</a><br>";
     echo "<a href='pridat.php'>Pridat zaznam</a><br>";
     echo "<a href='index.php'>Späť</a><br>";
-} else {
+    }} else {
     echo "<script type=\"text/javascript\">
             window.location = \"../\"
             </script>";

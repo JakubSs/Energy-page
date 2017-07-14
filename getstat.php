@@ -37,6 +37,11 @@ if (isset($_COOKIE["PHPSESSID"]) && isset($_COOKIE["meno"])) {
                 $dniVoda = $row2['sumDniVoda'];
                 $dennyPriemerVoda = $voda / $dniVoda;
                 }
+                if ($modulVodaTepla==true)
+                {$vodaTepla = $row2['stavVodaTepla'];
+                $dniVodaTepla = $row2['sumDniVodaTepla'];
+                $dennyPriemerVodaTepla = $vodaTepla / $dniVodaTepla;
+                }
 
                 
             }}
