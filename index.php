@@ -3,9 +3,9 @@ if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
             </script>";
-} else if (file_exists("config.php") && file_exists("install-remove.php")) {
+} else if (file_exists("config.php") && file_exists("install.php")) {
 
-    $file = "install-remove.php";
+    $file = "install.php";
     unlink($file);
 } else {
     require_once("config.php");
@@ -32,7 +32,7 @@ if (isset($_COOKIE["needReload"]))
             <h1>Energy page database <?php echo $dbname; ?></h1>
 <?php
 //echo $_COOKIE[name]." - ".$_COOKIE[name2]." - ".$_COOKIE[PHPSESSID]." - ".$_COOKIE[wrong]. " ->".$_COOKIE[user_pass]. "<-";
-echo "<a href='/2.0'><img src='$logo' height='50px'></a><br>";
+echo "<a href='/'><img src='$logo' height='50px'></a><br>";
 
 if (verificate() == false) {
 
@@ -102,7 +102,7 @@ if (verificate() == false) {
             editConfigShow();
         }
         if ($_GET["newConfig"] == true) {
-            editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"], $_POST["secret"]);
+            editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"], $_POST["secret"], $_POST["lastStatistics"]);
         }
         echo "<a href='index.php?showPaymentRecords=true'>Show payment records</a><br>";
         echo "<a href='index.php?addPaymentRecord=true'>Add payment records</a><br>";

@@ -32,11 +32,11 @@ function logout() {
     setcookie("PHPSESSID", "", time() - (300), "/");
     setcookie("name", "", time() - (300), "/");
     echo "<script type=\"text/javascript\">
-            window.location.href = \"/2.0\"
+            window.location.href = \"/\"
             </script>";
 }
 
-function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret) {
+function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics) {
 
     $myfile = fopen("config.php", "w") or die("Unable to open file!");
     $txt = "
@@ -47,6 +47,8 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 \$dbpassword = \"$dbpassword\";
 \$dbname = \"$dbname\";
 \$con = mysqli_connect(\$dbservername, \$dbusername, \$dbpassword, \$dbname);
+
+\$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
 \$releaseDate = \"2017-07-14\";
@@ -104,7 +106,7 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 setcookie("needReload", True, 0, "/");
     echo 'Configuration succesfully saved';
             echo "<script type=\"text/javascript\">
-            window.location = \"/2.0/\"
+            window.location = \"/\"
             </script>";
 }
 
@@ -118,6 +120,7 @@ Database name <br><input type=\"text\" name=\"dbname\" size=\"40\" placeholder=\
 Database server <br><input type=\"text\" name=\"dbserver\" size=\"40\" placeholder=\"Database server\" value=\"" . $dbservername . "\"><br>
 Database user <br><input type=\"text\" name=\"dbuser\" size=\"40\" placeholder=\"Database user\" value=\"" . $dbusername . "\"><br>
 Database password <br><input type=\"password\" name=\"dbpass\" size=\"40\" value=\"" . $dbpassword . "\"><br><br>
+Statistics pagination <br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" . $lastStatistics . "\"><br><br>
 Enabled modules:
 <input type=\"checkbox\" name=\"gas\" value=\"true\"";
     if ($moduleGas == true)
@@ -321,10 +324,10 @@ function passWordChangeSave($oldPass, $newPass, $RepeatPass) {
         $user_pass = $row2['password'];
         if ($user_pass != $tmpold) {
             setcookie("noOld", True, 0, "/");
-            echo "<script type=\"text/javascript\">window.location.href = \"/2.0/index.php?passchange=true\"</script>";
+            echo "<script type=\"text/javascript\">window.location.href = \"/index.php?passchange=true\"</script>";
         } else if ($tmpnew != $tmpRepeat) {
             setcookie("noSame", True, 0, "/");
-            echo "<script type=\"text/javascript\">window.location.href = \"/2.0/index.php?passchange=true\"</script>";
+            echo "<script type=\"text/javascript\">window.location.href = \"/index.php?passchange=true\"</script>";
         } else {
 
             $sql = "UPDATE users SET password='$tmpnew' WHERE username='$user'";
@@ -333,7 +336,7 @@ function passWordChangeSave($oldPass, $newPass, $RepeatPass) {
                 die('Error: ' . mysqli_error($con));
             }
             setcookie("changed", True, 0, "/");
-            echo "<script type=\"text/javascript\">window.location.href = \"/2.0/\"</script>";
+            echo "<script type=\"text/javascript\">window.location.href = \"/\"</script>";
         }
     }
 }
@@ -341,7 +344,7 @@ function passWordChangeSave($oldPass, $newPass, $RepeatPass) {
 function addRecordShow() {
     include("config.php");
     echo "
-                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Pridaj zaznam</legend>
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add record</legend>
         <form method=\"POST\" action=\"index.php?addedRecord=true\">
         Date <br><input type=\"date\" id=\"today\" name=\"date\" min=\"2017-03-31\" max=\"2100-12-31\" value=\"" . date("Y-m-d") . "\"><br>";
     if ($moduleGas == true) {
@@ -382,7 +385,7 @@ function addRecordSave($date, $energy, $score, $inicial, $note) {
 function addUser() {
     include("config.php");
     echo "
-                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Pridaj používateľa:</legend>
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add user:</legend>
         <form method=\"POST\" action=\"index.php?register=true\">
         username <br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\"><br>
         password <br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\"><br><br>
@@ -410,9 +413,24 @@ function registerUser($username, $password, $email, $group, $note) {
     }
 }
 
+function getHighestid($table){
+    include("config.php");
+    $sql = "SELECT * FROM $table ORDER BY id DESC LIMIT 1";
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    } else {
+        $result = mysqli_query($con, $sql);
+    while ($row = mysqli_fetch_array($result)) {
+        return $row['id'];
+    }
+
+}}
+
 function statistics($energy) {
     include("config.php");
-
+    $lastOne=getHighestid($energy);
+    $firstOne=$lastOne-$lastStatistics;
+    //$sql = "SELECT * FROM $energy ORDER BY date ASC limit 10 offset $firstOne";
     $sql = "SELECT * FROM $energy";
     echo $sql;
 
@@ -483,14 +501,14 @@ function statistics($energy) {
                 $unit = "kWh";
             } else
                 $unit = "m<sup>3</sup>";
+            if (($row['id']>=$firstOne) && ($row['id'] <= $lastOne)){
             echo "<tr><td>" . $row['id'] . "</td><td>" . $row['date'] . "</td><td>" . $days_between . "</td><td>" . $row['score'];
 
             echo"$unit</td><td>" . $temp;
 
             echo"$unit</td><td " . $a . ">" . ($temp / $days_between);
 
-            echo"$unit</td><td>" . $inicial . "</td><td>" . $row['note'] . "</td>
-</tr>";
+            echo"$unit</td><td>" . $inicial . "</td><td>" . $row['note'] . "</td></tr>";}
             $last = $row['score'];
             $lastdate = $row['date'];
         }
@@ -508,7 +526,6 @@ function statistics($energy) {
     }
     $energy = ucfirst($energy);
     $sql = "UPDATE tempStat SET 	user='" . $_COOKIE[name] . "', score$energy=$sum, sumScore$energy=$sumDays WHERE id='1'";
-    //echo $sql;
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
@@ -516,7 +533,7 @@ function statistics($energy) {
 
 function showPaymentRecords() {
     include("config.php");
-    $sql2 = "SELECT * FROM paymentRecords";
+    $sql2 = "SELECT * FROM paymentRecords ORDER BY id DESC ";
 
     if (mysqli_connect_errno($con)) {
         echo "failed connection!";

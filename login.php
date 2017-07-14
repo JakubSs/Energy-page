@@ -60,7 +60,7 @@ Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
                 
             }
             echo "<script type=\"text/javascript\">
-            window.location.href = \"/2.0\"
+            window.location.href = \"/\"
             </script>";
         }
          
@@ -69,12 +69,12 @@ Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
             setcookie("wrong", True, 0, "/");
     setcookie("name2", $user, 0, "/");}
     echo '<script type="text/javascript">
-           window.location = "/2.0/"
+           window.location = "/"
       </script>';
 } else if (verificate()==true) {
     echo "logged";
     echo '<script type="text/javascript">
-           window.location.href = "/2.0"
+           window.location.href = "/"
       </script>';
 } else {
 

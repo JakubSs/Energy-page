@@ -11,6 +11,7 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
     $email = $_POST["email"];
     $pass = $_POST["pass"];
     $secret = $_POST["secret"];
+    $lastStatistics = $_POST["lastStatistics"];
     $moduleGas = $_POST["gas"];
     $moduleEE = $_POST["ee"];
     $moduleWater = $_POST["water"];
@@ -24,6 +25,8 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
 \$dbpassword = \"$dbpassword\";
 \$dbname = \"$dbname\";
 \$con = mysqli_connect(\$dbservername, \$dbusername, \$dbpassword, \$dbname);
+
+\$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
 \$releaseDate = \"2017-07-14\";
@@ -302,6 +305,7 @@ if (!mysqli_query($con, $sql)) {
       </script>';
 } else {
     $secret = md5(microtime() . rand());
+    if (!isset($_POST["lastStatistics"])){$tmp12=10;}
     echo "<div align=\"center\">
         <fieldset style=\"width:30%\"><legend>Install</legend>
 <form method=\"POST\" action=\"install.php\">
@@ -313,6 +317,7 @@ Login user <br><input type=\"text\" name=\"user\" size=\"40\" placeholder=\"Logi
 email <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\"><br><br>
 Login Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
 <br><input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
+Statistics pagination <br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" .$tmp12. $_POST["lastStatistics"] . "\"><br><br>
             Which modules you want to use?
 <input type=\"checkbox\" name=\"gas\" value=\"true\"";
     if ($moduleGas == true)
