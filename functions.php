@@ -29,11 +29,93 @@ function verificate() {
 }
 
 function logout() {
+    include("config.php");
+    $user=$_COOKIE["name"];
+    $sql = "UPDATE users SET lastSession='' WHERE username='$user'";
     setcookie("PHPSESSID", "", time() - (300), "/");
     setcookie("name", "", time() - (300), "/");
+
+            if (!mysqli_query($con, $sql)) {
+                die('Error: ' . mysqli_error($con));
+            }
     echo "<script type=\"text/javascript\">
             window.location.href = \"/\"
             </script>";
+}
+
+function showStat() {
+    include("config.php");
+                    echo "
+                <fieldset><legend>Statistic</legend>
+                    <table border=\"1\">
+                        <tr>
+                            <th>Spent</th>
+                            <th>Daily average</th>
+                            <th>Yearly assumption</th>
+
+                        </tr>";
+                        
+                        if (count($modules) > 0) {
+        foreach ($modules as &$modul) {
+                
+        if ($modul == "ee") {
+                $unit = "kWh";
+            } else
+                $unit = "m<sup>3</sup>";
+                $score = getSpent($modul);
+                $average=getstat($modul);
+            
+            echo "<tr><td>" . $score . " $unit</td><td>" . $average . " $unit</td><td>" . ($average * 365) . " $unit</td><tr>";
+        }
+                       echo "</table> </fieldset>";
+
+
+
+
+
+    
+}}
+
+function getSpent($model) {
+    include("config.php");
+    
+    $sql2 = "SELECT * FROM tempStat";
+            
+            if (mysqli_connect_errno($con)) {
+                echo "failed connection!";
+            } 
+            $result2 = mysqli_query($con, $sql2);
+                while ($row2 = mysqli_fetch_array($result2)) {
+                    $model = ucfirst($model);  
+                    $score="Score".$model;
+                    $sumScore="SumScore".$model;
+                    $unit=$row2[$score];
+                    $days=$row2[$sumScore];
+                    $dailyAverage = $unit / $days;
+                    return $unit;
+                }
+            
+}
+
+function getstat($model) {
+    include("config.php");
+    
+    $sql2 = "SELECT * FROM tempStat";
+            
+            if (mysqli_connect_errno($con)) {
+                echo "failed connection!";
+            } 
+            $result2 = mysqli_query($con, $sql2);
+                while ($row2 = mysqli_fetch_array($result2)) {
+                    $model = ucfirst($model);  
+                    $score="Score".$model;
+                    $sumScore="SumScore".$model;
+                    $unit=$row2[$score];
+                    $days=$row2[$sumScore];
+                    $dailyAverage = $unit / $days;
+                    return $dailyAverage;
+                }
+            
 }
 
 function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics) {
@@ -145,27 +227,6 @@ Enabled modules:
 </fieldset>
 </div>
 ";
-}
-
-function getstat($model) {
-    include("config.php");
-    
-    $sql2 = "SELECT * FROM tempStat";
-            
-            if (mysqli_connect_errno($con)) {
-                echo "failed connection!";
-            } 
-            $result2 = mysqli_query($con, $sql2);
-                while ($row2 = mysqli_fetch_array($result2)) {
-                    $model = ucfirst($model);  
-                    $score="Score".$model;
-                    $sumScore="SumScore".$model;
-                    $unit=$row2[$score];
-                    $days=$row2[$sumScore];
-                    $dailyAverage = $unit / $days;
-                    return $dailyAverage;
-                }
-            
 }
 
 function drawGraph($module) {

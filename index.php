@@ -3,9 +3,9 @@ if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
             </script>";
-} else if (file_exists("config.php") && file_exists("install.php")) {
+} else if (file_exists("config.php") && file_exists("install-remove.php")) {
 
-    $file = "install.php";
+    $file = "install-remove.php";
     unlink($file);
 } else {
     require_once("config.php");
@@ -122,6 +122,7 @@ if (verificate() == false) {
             addPaymentRecordSave($_POST["kind"], $_POST["customerNumber"], $_POST["payment"], $_POST["tariff"], $_POST["bankAccounts"], $_POST["Variable"], $_POST["Constant"], $_POST["EIC"], $_POST["deliveryPoint"], $_POST["consumptionPoint"]);
         }
         
+        showStat();
         
     }
     ?>
