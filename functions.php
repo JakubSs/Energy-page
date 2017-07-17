@@ -28,16 +28,24 @@ function verificate() {
     }
 }
 
+function returnAvailableModules() {
+    return $availableModules = array("gas", "ee", "water", "hotWater");
+}
+
+function returnAvailableModulesNames() {
+    return $availableModulesNames = array("Gas", "Electricity", "Water", "Hot water");
+}
+
 function logout() {
     include("config.php");
-    $user=$_COOKIE["name"];
+    $user = $_COOKIE["name"];
     $sql = "UPDATE users SET lastSession='' WHERE username='$user'";
     setcookie("PHPSESSID", "", time() - (300), "/");
     setcookie("name", "", time() - (300), "/");
 
-            if (!mysqli_query($con, $sql)) {
-                die('Error: ' . mysqli_error($con));
-            }
+    if (!mysqli_query($con, $sql)) {
+        die('Error: ' . mysqli_error($con));
+    }
     echo "<script type=\"text/javascript\">
             window.location.href = \"/\"
             </script>";
@@ -45,81 +53,90 @@ function logout() {
 
 function showStat() {
     include("config.php");
-                    echo "
-                <fieldset><legend>Statistic</legend>
-                    <table border=\"1\">
-                        <tr>
-                            <th>Spent</th>
-                            <th>Daily average</th>
-                            <th>Yearly assumption</th>
+    $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
+    <script type=\"text/javascript\">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
 
-                        </tr>";
-                        
-                        if (count($modules) > 0) {
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Kind');
+        data.addColumn('number', 'Spent');
+        data.addColumn('number', 'Daily average');
+        data.addColumn('number', 'Yearly assumption');
+        data.addRows([";
+
+    if (count($modules) > 0) {
         foreach ($modules as &$modul) {
-                
-        if ($modul == "ee") {
+
+            if ($modul == "ee") {
                 $unit = "kWh";
             } else
                 $unit = "m<sup>3</sup>";
-                $score = getSpent($modul);
-                $average=getstat($modul);
-            
-            echo "<tr><td>" . $score . " $unit</td><td>" . $average . " $unit</td><td>" . ($average * 365) . " $unit</td><tr>";
+            $score = getSpent($modul);
+            $average = getstat($modul);
+            $modul = ucfirst($modul);
+            $google.="['$modul',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'}],";
         }
-                       echo "</table> </fieldset>";
+        $google.="]);
 
+        var table = new google.visualization.Table(document.getElementById('table_statistics'));
 
-
-
-
+        table.draw(data, {showRowNumber: true, allowHtml: true});
+      }
+    </script>
     
-}}
+<div id=\"table_statistics\" ></div>";
+    }
+    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>Statistic</legend> $google </fieldset>";
+    //echo $google;
+}
 
 function getSpent($model) {
     include("config.php");
-    
+
     $sql2 = "SELECT * FROM tempStat";
-            
-            if (mysqli_connect_errno($con)) {
-                echo "failed connection!";
-            } 
-            $result2 = mysqli_query($con, $sql2);
-                while ($row2 = mysqli_fetch_array($result2)) {
-                    $model = ucfirst($model);  
-                    $score="Score".$model;
-                    $sumScore="SumScore".$model;
-                    $unit=$row2[$score];
-                    $days=$row2[$sumScore];
-                    $dailyAverage = $unit / $days;
-                    return $unit;
-                }
-            
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    }
+    $result2 = mysqli_query($con, $sql2);
+    while ($row2 = mysqli_fetch_array($result2)) {
+        $model = ucfirst($model);
+        $score = "Score" . $model;
+        $sumScore = "SumScore" . $model;
+        $unit = $row2[$score];
+        $days = $row2[$sumScore];
+        $dailyAverage = $unit / $days;
+        return $unit;
+    }
 }
 
 function getstat($model) {
     include("config.php");
-    
+
     $sql2 = "SELECT * FROM tempStat";
-            
-            if (mysqli_connect_errno($con)) {
-                echo "failed connection!";
-            } 
-            $result2 = mysqli_query($con, $sql2);
-                while ($row2 = mysqli_fetch_array($result2)) {
-                    $model = ucfirst($model);  
-                    $score="Score".$model;
-                    $sumScore="SumScore".$model;
-                    $unit=$row2[$score];
-                    $days=$row2[$sumScore];
-                    $dailyAverage = $unit / $days;
-                    return $dailyAverage;
-                }
-            
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    }
+    $result2 = mysqli_query($con, $sql2);
+    while ($row2 = mysqli_fetch_array($result2)) {
+        $model = ucfirst($model);
+        $score = "Score" . $model;
+        $sumScore = "SumScore" . $model;
+        $unit = $row2[$score];
+        $days = $row2[$sumScore];
+        $dailyAverage = $unit / $days;
+        return $dailyAverage;
+    }
 }
 
 function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics) {
-
+    if (($dbname!="") && ($dbservername!="") && ($dbusername!="") && ($dbpassword!="") && ($secret!="") && ($lastStatistics!=""))
+    {
+    $availableModules = unserialize($_COOKIE['available']);
+    $availableModulesNames = unserialize($_COOKIE['availableNames']);
     $myfile = fopen("config.php", "w") or die("Unable to open file!");
     $txt = "
         <?php
@@ -133,50 +150,91 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-07-14\";
-\$version = \"2.0\";
+\$releaseDate = \"2017-07-18\";
+\$version = \"2.1\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
+\$availableModules=array(";
+    $countOfModules = count($availableModules);
+    $i = 0;
+    foreach ($availableModules as &$availableModul) {
+        $txt .= "\"$availableModul\"";
+        if ($i < ($countOfModules - 1)) {
+            $txt .= ",";
+            $i++;
+        }
+    }
 
-\$modules=array();";
+
+
+    $txt .= ");
+        
+\$availableModulesNames=array(";
+    $countOfModulesNames = count($availableModulesNames);
+    $i = 0;
+    foreach ($availableModulesNames as &$availableModuleName) {
+        $txt .= "\"$availableModuleName\"";
+        if ($i < ($countOfModulesNames - 1)) {
+            $txt .= ",";
+            $i++;
+        }
+    }
+
+
+
+    $txt .= ");
+\$modules=array();
+";
     if ($moduleGas == true) {
-        $txt.="array_push(\$modules, \"gas\");";
+        $txt.="array_push(\$modules, \"gas\");
+";
     }
     if ($moduleEE == true) {
-        $txt.="array_push(\$modules, \"ee\");";
+        $txt.="array_push(\$modules, \"ee\");
+";
     }
     if ($moduleWater == true) {
-        $txt.="array_push(\$modules, \"water\");";
+        $txt.="array_push(\$modules, \"water\");
+";
     }
     if ($moduleHotWater == true) {
-        $txt.="array_push(\$modules, \"hotWater\");";
+        $txt.="array_push(\$modules, \"hotWater\");
+";
     }
 
 
     $txt.= "\$moduleGas=";
     if ($moduleGas == true) {
-        $txt.="true;";
+        $txt.="true;
+";
     } else {
-        $txt.="false;";
+        $txt.="false;
+";
     }
     $txt .= "\$moduleEE=";
     if ($moduleEE == true) {
-        $txt.="true;";
+        $txt.="true;
+";
     } else {
-        $txt.="false;";
+        $txt.="false
+;";
     }
     $txt .= "\$moduleWater=";
     if ($moduleWater == true) {
-        $txt.="true;";
+        $txt.="true;
+";
     } else {
-        $txt.="false;";
+        $txt.="false;
+";
     }
     $txt .= "\$moduleHotWater=";
     if ($moduleHotWater == true) {
-        $txt.="true;";
+        $txt.="true;
+";
     } else {
-        $txt.="false;";
+        $txt.="false;
+";
     }
 
     $txt .="
@@ -185,11 +243,12 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 
     fwrite($myfile, $txt);
     fclose($myfile);
-setcookie("needReload", True, 0, "/");
-    echo 'Configuration succesfully saved';
-            echo "<script type=\"text/javascript\">
-            window.location = \"/\"
-            </script>";
+    setcookie("needReload", True, 0, "/");
+    echo 'Configuration succesfully saved';}
+    else    {
+        echo "Something is missing!";
+        editConfigShow ();
+    }
 }
 
 function editConfigShow() {
@@ -198,11 +257,11 @@ function editConfigShow() {
     echo "<div align=\"center\">
         <fieldset style=\"width:30%\"><legend>Edit configuration</legend>
 <form method=\"POST\" action=\"index.php?newConfig=true\">
-Database name <br><input type=\"text\" name=\"dbname\" size=\"40\" placeholder=\"Database name\" value=\"" . $dbname . "\"><br>
-Database server <br><input type=\"text\" name=\"dbserver\" size=\"40\" placeholder=\"Database server\" value=\"" . $dbservername . "\"><br>
-Database user <br><input type=\"text\" name=\"dbuser\" size=\"40\" placeholder=\"Database user\" value=\"" . $dbusername . "\"><br>
-Database password <br><input type=\"password\" name=\"dbpass\" size=\"40\" value=\"" . $dbpassword . "\"><br><br>
-Statistics pagination <br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" . $lastStatistics . "\"><br><br>
+Database name *<br><input type=\"text\" name=\"dbname\" size=\"40\" placeholder=\"Database name\" value=\"" . $dbname . "\"><br>
+Database server *<br><input type=\"text\" name=\"dbserver\" size=\"40\" placeholder=\"Database server\" value=\"" . $dbservername . "\"><br>
+Database user *<br><input type=\"text\" name=\"dbuser\" size=\"40\" placeholder=\"Database user\" value=\"" . $dbusername . "\"><br>
+Database password *<br><input type=\"password\" name=\"dbpass\" size=\"40\" value=\"" . $dbpassword . "\"><br><br>
+Statistics pagination *<br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" . $lastStatistics . "\"><br><br>
 Enabled modules:
 <input type=\"checkbox\" name=\"gas\" value=\"true\"";
     if ($moduleGas == true)
@@ -221,12 +280,15 @@ Enabled modules:
         echo "checked=\"checked\"";
     echo"> Hot water<br>
 <br><input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
+    
 
 <input id=\"button\" type=\"submit\" name=\"submit\" value=\"Change\">
 </form>
 </fieldset>
 </div>
 ";
+    setcookie("available", serialize($availableModules), 0, "/");
+    setcookie("availableNames", serialize($availableModulesNames), 0, "/");
 }
 
 function drawGraph($module) {
@@ -293,7 +355,7 @@ function drawAverageGraph($module) {
     $sql2 = "SELECT * FROM $module";
     $tempDays = 0;
     $lastdate = 0;
-    $last=0;
+    $last = 0;
     if (mysqli_connect_errno($con)) {
         echo "failed connection!";
     } else {
@@ -342,9 +404,9 @@ function passWordChange() {
     echo "
                 <div align=\"center\"><fieldset style=\"width:30%\"><legend>Change password <mark> $_COOKIE[name]</mark></legend>
         <form method=\"POST\" action=\"index.php?changedPass=true\">
-        Old password <br><input type=\"password\" name=\"oldPass\" size=\"40\" placeholder=\"Enter old password\"><br><br>
-        New password <br><input type=\"password\" name=\"newPass\" size=\"40\" placeholder=\"Enter new password\"><br><br>
-        Repeat new password <br><input type=\"password\" name=\"repeatPass\" size=\"40\" placeholder=\"Repeat new password\"><br><br>
+        Old password *<br><input type=\"password\" name=\"oldPass\" size=\"40\" placeholder=\"Enter old password\"><br><br>
+        New password *<br><input type=\"password\" name=\"newPass\" size=\"40\" placeholder=\"Enter new password\"><br><br>
+        Repeat new password *<br><input type=\"password\" name=\"repeatPass\" size=\"40\" placeholder=\"Repeat new password\"><br><br>
         <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"Change password\"><div>
         </form>
         </fieldset><div>
@@ -407,20 +469,20 @@ function addRecordShow() {
     echo "
                 <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add record</legend>
         <form method=\"POST\" action=\"index.php?addedRecord=true\">
-        Date <br><input type=\"date\" id=\"today\" name=\"date\" min=\"2017-03-31\" max=\"2100-12-31\" value=\"" . date("Y-m-d") . "\"><br>";
+        Date* <br><input type=\"date\" id=\"today\" name=\"date\" min=\"" . date("Y-m-d") . "\" max=\"2100-12-31\" value=\"" . date("Y-m-d") . "\"><br>";
     if ($moduleGas == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"gas\"> Gas<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"gas\"> Gas*<br>";
     }
     if ($moduleEE == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"ee\"> Electricity<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"ee\"> Electricity*<br>";
     }
     if ($moduleWater == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"water\"> Water<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"water\"> Water*<br>";
     }
     if ($moduleHotWater == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"hotWater\">Hot Water<br><br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"hotWater\">Hot Water*<br><br>";
     }
-    echo "Score in whole numbers rounded up:<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"For instance, 254,325 will be recorded as 255\" style=\"width: 20em;\"><br>
+    echo "Score in whole numbers rounded up:*<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"For instance, 254,325 will be recorded as 255\" style=\"width: 20em;\"><br>
         Inicial <input type=\"checkbox\" name=\"inicial\" value=\"0\"><br>
         Note <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
         <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"AddRecord\" align=\"right\"><div>
@@ -431,6 +493,7 @@ function addRecordShow() {
 
 function addRecordSave($date, $energy, $score, $inicial, $note) {
     include("config.php");
+if (($date >= getLastDate($energy)) && (($date!="") && ($energy!="") && ($score!=""))){
     if (!$inicial) {
         $inicial = 0;
     }
@@ -440,16 +503,19 @@ function addRecordSave($date, $energy, $score, $inicial, $note) {
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
-    echo "Record succesfully added. <br>";
-}
+    echo "Record succesfully added. <br>";}
+else    {
+    echo "Something is missing.";
+    addRecordShow ();
+}}
 
 function addUser() {
     include("config.php");
     echo "
                 <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add user:</legend>
         <form method=\"POST\" action=\"index.php?register=true\">
-        username <br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\"><br>
-        password <br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\"><br><br>
+        username *<br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\"><br>
+        password *<br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\"><br><br>
         email <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\"><br><br>
         note <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
         group <br><input type=\"number\" name=\"group\" size=\"40\" placeholder=\"id of group,default is 1\"><br>
@@ -472,47 +538,52 @@ function registerUser($username, $password, $email, $group, $note) {
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
+    echo "User $username was added successfully. ";
 }
 
-function getHighestid($table){
+function getHighestid($table) {
     include("config.php");
     $sql = "SELECT * FROM $table ORDER BY id DESC LIMIT 1";
     if (mysqli_connect_errno($con)) {
         echo "failed connection!";
     } else {
         $result = mysqli_query($con, $sql);
-    while ($row = mysqli_fetch_array($result)) {
-        return $row['id'];
+        while ($row = mysqli_fetch_array($result)) {
+            return $row['id'];
+        }
     }
-
-}}
+}
 
 function statistics($energy) {
     include("config.php");
-    $lastOne=getHighestid($energy);
-    $firstOne=$lastOne-$lastStatistics;
+    $lastOne = getHighestid($energy);
+    $firstOne = $lastOne - $lastStatistics;
     //$sql = "SELECT * FROM $energy ORDER BY date ASC limit 10 offset $firstOne";
     $sql = "SELECT * FROM $energy";
-    echo $sql;
+    //echo $sql;
 
     if (mysqli_connect_errno($con)) {
         echo "failed connection!";
     } else {
         $result = mysqli_query($con, $sql);
+        $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
+    <script type=\"text/javascript\">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Date');    
+        data.addColumn('number', 'Days');
+        data.addColumn('number', 'Score');
+        data.addColumn('number', 'Used');
+        data.addColumn('number', 'Daily average from last record');
+        data.addColumn('boolean', 'Inicial');
+        data.addColumn('string', 'Note');
+        data.addRows([
+        ";
 
 
-        echo "<fieldset><legend>Statistic for $energy</legend>
-                        <table border=\"1\">
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Days</th>
-                                <th>Score</th>
-                                <th>Used</th>
-                                <th>Daily average from last record</th>
-                                <th>Inicial</th>
-                                <th>Note</th>
-                            </tr>";
         $sum = 0;
         $sumDays = 0;
         $temp = 0;
@@ -526,11 +597,6 @@ function statistics($energy) {
 
 
 //$inicial="";
-            if ($row['inicial'] == 0) {
-                $inicial = "no";
-            } else {
-                $inicial = "yes";
-            }
 
             $temp = $row['score'] - $last;
             if ($row['inicial'] == 1) {
@@ -562,79 +628,111 @@ function statistics($energy) {
                 $unit = "kWh";
             } else
                 $unit = "m<sup>3</sup>";
-            if (($row['id']>=$firstOne) && ($row['id'] <= $lastOne)){
-            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['date'] . "</td><td>" . $days_between . "</td><td>" . $row['score'];
+            if (($row['id'] >= $firstOne) && ($row['id'] <= $lastOne)) {
+                $year = substr($row[date], 0, 4);
+                $month = (substr($row[date], -5, 2)) - 1;
+                $day = substr($row[date], -2, 2);
+                if ($row[inicial] == 1) {
+                    $tmpInicial = "true";
+                } else
+                    $tmpInicial = "false";
 
-            echo"$unit</td><td>" . $temp;
-
-            echo"$unit</td><td " . $a . ">" . ($temp / $days_between);
-
-            echo"$unit</td><td>" . $inicial . "</td><td>" . $row['note'] . "</td></tr>";}
+                $google.="[new Date($year, $month, $day),  {v: $days_between, f: '$days_between'},{v: $row[score] , "
+                        . "f: '$row[score] $unit'},{v: $temp, f: '$temp $unit'},{v: " . ($temp / $days_between) . ", "
+                        . "f: '" . ($temp / $days_between) . $unit . "'}, $tmpInicial, '$row[note]'],
+";
+            }
             $last = $row['score'];
             $lastdate = $row['date'];
         }
-        echo "</fieldset></table>";
-        echo $sum;
-        if ($energy == "ee") {
-            echo "kWh";
-        } else
-            echo "m<sup>3</sup>";
-        echo" for ";
+        $google.="
+            ]);
 
-        echo $sumDays . " days, with daily average : " . getstat($energy) . $unit;
+        var table = new google.visualization.Table(document.getElementById('table_statistic$energy'));
+            
+var formatter = new google.visualization.ColorFormat();
+formatter.addRange(" . getstat($energy) . ", 1000, 'white', 'red');
+formatter.addRange(null, " . getstat($energy) . ", 'black', '#33ff33');
+formatter.format(data, 4); // Apply formatter to second column
 
-        echo "<br><br><br>";
+        table.draw(data, {showRowNumber: true, allowHtml: true});
+      }
+    </script>
+    
+<div id=\"table_statistic$energy\" ></div>";
     }
     $energy = ucfirst($energy);
     $sql = "UPDATE tempStat SET 	user='" . $_COOKIE[name] . "', score$energy=$sum, sumScore$energy=$sumDays WHERE id='1'";
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
+    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>Statistic for $energy</legend> $google ";
+    echo $sum;
+    if ($energy == "ee") {
+        echo "kWh";
+    } else
+        echo "m<sup>3</sup>";
+    echo" for ";
+
+    echo $sumDays . " days, with daily average : " . getstat($energy) . $unit . "</fieldset>";
 }
 
 function showPaymentRecords() {
     include("config.php");
-    $sql2 = "SELECT * FROM paymentRecords ORDER BY id DESC ";
+    $sql2 = "SELECT * FROM paymentRecords ORDER BY id ASC ";
 
     if (mysqli_connect_errno($con)) {
         echo "failed connection!";
     } else {
         $result2 = mysqli_query($con, $sql2);
-        echo "
+        $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
+    <script type=\"text/javascript\">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
 
-                                                     <fieldset><legend>Payment records</legend><table border='1'>
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Kind');
+        data.addColumn('string', 'Customer number');
+        data.addColumn('string', 'payment');
+        data.addColumn('string', 'tariff');
+        data.addColumn('string', 'accounts');
+        data.addColumn('string', 'VS');
+        data.addColumn('string', 'CS');
+        data.addColumn('string', 'EIC');
+        data.addColumn('string', 'delivery point');
+        data.addColumn('string', 'consumption point');
+        data.addColumn('string', 'edit');
+        data.addRows([
+";
 
-                        <tr>
-                            <th>Kind</th>
-                            <th>Customer number</th>
-                            <th>payment</th>
-                            <th>tariff</th>
-                            <th>accounts</th>
-                            <th>VS</th>
-                            <th>CS</th>
-                            <th>EIC</th>
-                            <th>delivery point</th>
-                            <th>consumption point</th>
-                            <th>edit</th>
-
-                        </tr>";
         while ($row2 = mysqli_fetch_array($result2)) {
-            echo "<tr><td>$row2[kind]</td>"
-            . "<td>$row2[customerNumber]</td>"
-            . "<td>$row2[payment]</td>"
-            . "<td>$row2[tariff]</td>"
-            . "<td>$row2[bankAccounts]</td>"
-            . "<td>$row2[Variable]</td>"
-            . "<td>$row2[Constant]</td>"
-            . "<td>$row2[EIC]</td>"
-            . "<td>$row2[deliveryPoint]</td>"
-            . "<td>$row2[consumptionPoint]</td>"
-            . "<td><form method=\"POST\" action=\"index.php?editPaymentRecord=true\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$row2[id]\">
-</form></td></tr>";
+
+            $google.="['$row2[kind]', "
+                    . "'$row2[customerNumber]', "
+                    . "'$row2[payment] €',"
+                    . "'$row2[tariff]', "
+                    . "'$row2[bankAccounts]', "
+                    . "'$row2[Variable]', "
+                    . "'$row2[Constant]', "
+                    . "'$row2[EIC]', "
+                    . "'$row2[deliveryPoint]', "
+                    . "'$row2[consumptionPoint]', "
+                    . "'<form method=\"POST\" action=\"index.php?editPaymentRecord=true\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$row2[id]\"></form>'],
+";
         }
-        echo "</table> <br><br> <a href='index.php?addPaymentRecord=true'>Add payment record</a> </fieldset><br><br><br><br><br><br>"
-        ;
+
+        $google.="]);
+
+        var table = new google.visualization.Table(document.getElementById('table_payment_records'));
+
+        table.draw(data, {showRowNumber: true, allowHtml: true});
+      }
+    </script>
+    
+<div id=\"table_payment_records\" ></div>";
     }
+    echo "<fieldset style=\"margin: 20 20% 50 20%;\"><legend>Payment records</legend> $google <br> <a href='index.php?addPaymentRecord=true'>Add payment record</a></fieldset>";
 }
 
 function addPaymentRecord() {
@@ -664,8 +762,8 @@ function addPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAc
 
         if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
-        }
-        else echo "Record sucessfully added";
+        } else
+            echo "Record sucessfully added";
     }
     else {
         echo "<h1 style='color:red'>Fill all fields! </h1><br>";
@@ -709,13 +807,27 @@ function editPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankA
         $sql = "UPDATE paymentRecords SET kind='$kind', customerNumber='$customerNumber', payment='$payment', tariff='$tariff',"
                 . " bankAccounts='$bankAccounts', Variable='$Variable', Constant=$Constant, EIC='$EIC', deliveryPoint='$deliveryPoint', ConsumptionPoint='$ConsumptionPoint' WHERE id='$id'";
 
-         if (!mysqli_query($con, $sql)) {
+        if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
-        }
-        else echo "Record sucessfully altered";
+        } else
+            echo "Record sucessfully altered";
     }
     else {
         echo "<h1 style='color:red'>Fill all fields! </h1><br>";
         editPaymentRecord($id);
     }
+}
+
+function getLastDate($energy){
+    include("config.php");
+    $sql2 = "SELECT * FROM $energy ORDER BY id DESC limit 1";
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    } else $result2 = mysqli_query($con, $sql2);
+    while ($row2 = mysqli_fetch_array($result2)){
+        return $row2[date];
+        
+    }
+    
 }
