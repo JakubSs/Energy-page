@@ -73,8 +73,8 @@ function showStat() {
                 $unit = "kWh";
             } else
                 $unit = "m<sup>3</sup>";
-            $score = getSpent($modul);
-            $average = getstat($modul);
+            $score = round(getSpent($modul), 2);
+            $average = round(getstat($modul), 2);
             $modul = ucfirst($modul);
             $google.="['$modul',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'}],";
         }
@@ -482,7 +482,7 @@ function addRecordShow() {
     if ($moduleHotWater == true) {
         echo"<input type=\"radio\" name=\"energy\" value=\"hotWater\">Hot Water*<br><br>";
     }
-    echo "Score in whole numbers rounded up:*<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"For instance, 254,325 will be recorded as 255\" style=\"width: 20em;\"><br>
+    echo "Score with possible 3 decimal numbers rounded up:*<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"266 or 345.345\" style=\"width: 20em;\" step=0.001><br>
         Inicial <input type=\"checkbox\" name=\"inicial\" value=\"0\"><br>
         Note <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
         <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"AddRecord\" align=\"right\"><div>
@@ -638,7 +638,7 @@ function statistics($energy) {
                     $tmpInicial = "false";
 
                 $google.="[new Date($year, $month, $day),  {v: $days_between, f: '$days_between'},{v: $row[score] , "
-                        . "f: '$row[score] $unit'},{v: $temp, f: '$temp $unit'},{v: " . ($temp / $days_between) . ", "
+                        . "f: '".round($row[score], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: " . ($temp / $days_between) . ", "
                         . "f: '" . ($temp / $days_between) . $unit . "'}, $tmpInicial, '$row[note]'],
 ";
             }

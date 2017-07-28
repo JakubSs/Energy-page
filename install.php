@@ -131,7 +131,7 @@ $countOfModulesNamesPrint
   `id` int(11) NOT NULL,
   `date` date NOT NULL,
   `year` year(4) NOT NULL,
-  `score` int(11) NOT NULL,
+  `score` DECIMAL(11,4) NOT NULL,
   `inicial` tinyint(1) DEFAULT NULL,
   `note` varchar(300) COLLATE utf8_slovak_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
@@ -162,7 +162,7 @@ $countOfModulesNamesPrint
 
     for ($i = 0; $i < $countOfModules; $i++) {
         $localModul = ucfirst($availableModules[$i]);
-        $sql .=" `Score$localModul` int(11) NOT NULL,
+        $sql .=" `Score$localModul` DECIMAL(11,4) NOT NULL,
 `SumScore$localModul` int(11) NOT NULL
 ";
         if ($i < ($countOfModules - 1)) {

@@ -3,9 +3,9 @@ if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
             </script>";
-} else if (file_exists("config.php") && file_exists("install-remove.php")) {
+} else if (file_exists("config.php") && file_exists("install.php")) {
 
-    $file = "install-remove.php";
+    $file = "install.php";
     unlink($file);
 } else {
     require_once("config.php");
