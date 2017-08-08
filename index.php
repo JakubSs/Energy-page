@@ -3,9 +3,9 @@ if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
             </script>";
-} else if (file_exists("config.php") && file_exists("install.php")) {
+} else if (file_exists("config.php") && file_exists("install-remove.php")) {
 
-    $file = "install.php";
+    $file = "install-remove.php";
     unlink($file);
 } else {
     require_once("config.php");
@@ -27,7 +27,7 @@ if (isset($_COOKIE["needReload"])) {
         <title>Resources page <?php echo $version; ?></title>
     </head>
     <body><div align="center">
-            <h1>Energy page database <?php echo $dbname; ?></h1>
+            <h1><?php echo $headingLang ?></h1>
 <?php
 //echo $_COOKIE[name]." - ".$_COOKIE[name2]." - ".$_COOKIE[PHPSESSID]." - ".$_COOKIE[wrong]. " ->".$_COOKIE[user_pass]. "<-";
 echo "<a href='/'><img src='$logo' height='50px'></a><br>";
@@ -37,46 +37,49 @@ if (verificate() == false) {
     require_once("login.php");
 } else if (verificate() == true) {
     echo "
-                <fieldset style=\"margin: 20 30% 50 30%;\"><legend>Menu</legend>
+                <fieldset style=\"margin: 20 25% 50 25%;\"><legend>Menu</legend>
                     <table border=\"1\">
                         <tr>
-                            <th>System:</th>
+                            <th>$SystemLang</th>
 
                         ";
-    echo "<td><a href='index.php?logout=true'>Logout $_COOKIE[name]</a></td>";
+    echo "<td><a href='index.php?logout=true'>$logoutLang $_COOKIE[name]</a></td>";
     if ($_GET["logout"] == true) {
         logout();
     }
     
-    echo "<td><a href='index.php?passchange=true'>Change password</a></td>";
-    echo "<td><a href='index.php?editConfig=true'>Edit configuration</a></td>";
-    echo "<td><a href='index.php?adduser=true'>Add user</a></td></tr>";
+    echo "<td><a href='index.php?passchange=true'>$changePasswordLang</a></td>";
+    echo "<td><a href='index.php?editConfig=true'>$editConfigurationLang</a></td>";
+    echo "<td><a href='index.php?adduser=true'>$addUser</a></td></tr>";
     
     
-    echo "<tr><th>Functions:</th>";
-    echo "<td><a href='index.php?addRecord=true'>Add record</a></td>";
-    echo "<td><a href='index.php?showPaymentRecords=true'>Show payment records</a></td>";
-    echo "<td><a href='index.php?addPaymentRecord=true'>Add payment records</a></td></tr>";
+    echo "<tr><th>$FunctionsLang:</th>";
+    echo "<td><a href='index.php?addRecord=true'>$addRecordLang</a></td>";
+    echo "<td><a href='index.php?showPaymentRecords=true'>$showPaymentRecordLang</a></td>";
+    echo "<td><a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a></td></tr>";
     
     
     if (count($modules) > 0) {
-        echo "<tr><th>Statistics:</th>";
+        echo "<tr><th>$statisticsLang:</th>";
         foreach ($modules as &$modul) {
-            echo "<td><a href='index.php?stat=" . $modul . "'>Statistics for " . $modul . "</a></td>";
+            $energyTemp=$modul;
+            echo "<td><a href='index.php?stat=" . $modul . "'>$statisticsForLang" . ${$energyTemp."Lang"} . "</a></td>";
         }
         echo "</tr>";
     }
     if (count($modules) > 0) {
-        echo "<tr><th>Graphs:</th>";
+        echo "<tr><th>$GraphLang:</th>";
         foreach ($modules as &$modul) {
-            echo "<td><a href='index.php?graph=" . $modul . "'>Graph for " . $modul . "</a></td>";
+            $energyTemp=$modul;
+            echo "<td><a href='index.php?graph=" . $modul . "'>$graphForLang " . ${$energyTemp."Lang"} . "</a></td>";
         }
         echo "</tr>";
     }
     if (count($modules) > 0) {
-        echo "<tr><th>Average graphs:</th>";
+        echo "<tr><th>$AverageGraphLang</th>";
         foreach ($modules as &$modul) {
-            echo "<td><a href='index.php?averageGraph=" . $modul . "'>Averge graph for " . $modul . "</a></td>";
+            $energyTemp=$modul;
+            echo "<td><a href='index.php?averageGraph=" . $modul . "'>$averageGraphForLang " . ${$energyTemp."Lang"} . "</a></td>";
         }
         echo "</tr>";
     }
@@ -95,7 +98,7 @@ echo "</table> </fieldset>";
         passWordChangeSave($_POST["oldPass"], $_POST["newPass"], $_POST["repeatPass"]);
     }
     else if ($_GET["newConfig"] == true) {
-        editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"], $_POST["secret"], $_POST["lastStatistics"]);
+        editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"], $_POST["secret"], $_POST["lastStatistics"], $_POST["language"]);
     }
     
     else if ($_GET["addRecord"] == true) {
@@ -147,7 +150,7 @@ echo "</table> </fieldset>";
 
     
     if ($_COOKIE["changed"] == True) {
-        echo "<p color=\"red\"> Your password was changed succesfuly.</p>";
+        echo "<p color=\"red\">$changedPasswordLang</p>";
         setcookie("changed", True, time() - (300), "/");
     }
 }
@@ -161,7 +164,7 @@ echo "</table> </fieldset>";
     _position:absolute;
     _top:expression(eval(document.documentElement.scrollTop+
         (document.documentElement.clientHeight-this.offsetHeight)));
-    height:35px;\"><p>This is energy page version $version made by $Author with release date ". date_format($date, 'l jS F Y') .". My page is <a href='$link'>$link</a></p></div>";
+    height:35px;\"><p>$footerLang</p></div>";
             ?>
     </body>
 </html>

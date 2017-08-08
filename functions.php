@@ -33,7 +33,7 @@ function returnAvailableModules() {
 }
 
 function returnAvailableModulesNames() {
-    return $availableModulesNames = array("Gas", "Electricity", "Water", "Hot water");
+    return $availableModulesNames = array("$gasLang", "$eeLang", "$waterLang", "$hotWaterLang");
 }
 
 function logout() {
@@ -53,6 +53,7 @@ function logout() {
 
 function showStat() {
     include("config.php");
+    include("$languagefile");
     $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
     <script type=\"text/javascript\">
       google.charts.load('current', {'packages':['table']});
@@ -60,10 +61,10 @@ function showStat() {
 
       function drawTable() {
         var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Kind');
-        data.addColumn('number', 'Spent');
-        data.addColumn('number', 'Daily average');
-        data.addColumn('number', 'Yearly assumption');
+        data.addColumn('string', '$kindLang');
+        data.addColumn('number', '$spentLang');
+        data.addColumn('number', '$dailyAverageLang');
+        data.addColumn('number', '$yearlyAssumptionLang');
         data.addRows([";
 
     if (count($modules) > 0) {
@@ -88,7 +89,7 @@ function showStat() {
     
 <div id=\"table_statistics\" ></div>";
     }
-    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>Statistic</legend> $google </fieldset>";
+    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>$statisticsLang</legend> $google </fieldset>";
     //echo $google;
 }
 
@@ -132,7 +133,7 @@ function getstat($model) {
     }
 }
 
-function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics) {
+function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics, $language) {
     if (($dbname!="") && ($dbservername!="") && ($dbusername!="") && ($dbpassword!="") && ($secret!="") && ($lastStatistics!=""))
     {
     $availableModules = unserialize($_COOKIE['available']);
@@ -147,11 +148,16 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 \$dbname = \"$dbname\";
 \$con = mysqli_connect(\$dbservername, \$dbusername, \$dbpassword, \$dbname);
 
+
+\$language=\"$language\";
+\$languagefile=\$language . \".php\";
+require_once(\"\$languagefile\");
+
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-07-18\";
-\$version = \"2.1\";
+\$releaseDate = \"2017-08-08\";
+\$version = \"2.2\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -254,35 +260,42 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
 function editConfigShow() {
 
     include("config.php");
+    include("$languagefile");
+    
     echo "<div align=\"center\">
-        <fieldset style=\"width:30%\"><legend>Edit configuration</legend>
+        <fieldset style=\"width:30%\"><legend>$editConfigurationLang</legend>
 <form method=\"POST\" action=\"index.php?newConfig=true\">
-Database name *<br><input type=\"text\" name=\"dbname\" size=\"40\" placeholder=\"Database name\" value=\"" . $dbname . "\"><br>
-Database server *<br><input type=\"text\" name=\"dbserver\" size=\"40\" placeholder=\"Database server\" value=\"" . $dbservername . "\"><br>
-Database user *<br><input type=\"text\" name=\"dbuser\" size=\"40\" placeholder=\"Database user\" value=\"" . $dbusername . "\"><br>
-Database password *<br><input type=\"password\" name=\"dbpass\" size=\"40\" value=\"" . $dbpassword . "\"><br><br>
-Statistics pagination *<br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" . $lastStatistics . "\"><br><br>
-Enabled modules:
+$dbNameLang *<br><input type=\"text\" name=\"dbname\" size=\"40\" placeholder=\"Database name\" value=\"" . $dbname . "\"><br>
+$dbServerLang *<br><input type=\"text\" name=\"dbserver\" size=\"40\" placeholder=\"Database server\" value=\"" . $dbservername . "\"><br>
+$dbUserLang *<br><input type=\"text\" name=\"dbuser\" size=\"40\" placeholder=\"Database user\" value=\"" . $dbusername . "\"><br>
+$dbPasswordLang *<br><input type=\"password\" name=\"dbpass\" size=\"40\" value=\"" . $dbpassword . "\"><br><br>
+$statistcsPaginationLang *<br><input type=\"number\" name=\"lastStatistics\" size=\"40\" value=\"" . $lastStatistics . "\"><br><br>
+<select name=\"language\">
+  <option value=\"sk_SK\""; if ($languageCode == "sk_SK")echo " selected";echo">Slovensky</option>
+  <option value=\"en_EN\""; if ($languageCode == "en_EN")echo " selected";echo">English</option>
+</select>
+<br>
+$enabledModulesLang:<br>
 <input type=\"checkbox\" name=\"gas\" value=\"true\"";
     if ($moduleGas == true)
         echo "checked=\"checked\"";
-    echo"> Gas<br>
+    echo"> $gasLang<br>
 <input type=\"checkbox\" name=\"ee\" value=\"true\" ";
     if ($moduleEE == true)
         echo "checked=\"checked\"";
-    echo"> Electricity<br>
+    echo"> Elektrina<br>
 <input type=\"checkbox\" name=\"water\" value=\"true\" ";
     if ($moduleWater == true)
         echo "checked=\"checked\"";
-    echo"> Water<br>
+    echo"> $waterLang<br>
 <input type=\"checkbox\" name=\"hotWater\" value=\"true\" ";
     if ($moduleHotWater == true)
         echo "checked=\"checked\"";
-    echo"> Hot water<br>
+    echo"> $hotWaterLang<br>
 <br><input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
     
 
-<input id=\"button\" type=\"submit\" name=\"submit\" value=\"Change\">
+<input id=\"button\" type=\"submit\" name=\"submit\" value=\"$changeLang\">
 </form>
 </fieldset>
 </div>
@@ -292,7 +305,9 @@ Enabled modules:
 }
 
 function drawGraph($module) {
+
     include("config.php");
+    include("$languagefile");
     echo "
     <script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
     <script type='text/javascript'>
@@ -302,8 +317,8 @@ function drawGraph($module) {
       function drawChart() {";
 
     echo "var data = new google.visualization.DataTable();
-            data.addColumn('date', 'Date');
-            data.addColumn('number', 'Score');
+            data.addColumn('date', '$dateLang');
+            data.addColumn('number', '$spentLang');
             data.addRows([";
     $sql2 = "SELECT * FROM $module";
 
@@ -339,7 +354,9 @@ function drawGraph($module) {
 }
 
 function drawAverageGraph($module) {
+
     include("config.php");
+    include("$languagefile");
     echo "
     <script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
     <script type='text/javascript'>
@@ -349,8 +366,8 @@ function drawAverageGraph($module) {
       function drawChart() {";
 
     echo "var data = new google.visualization.DataTable();
-            data.addColumn('date', 'Date');
-            data.addColumn('number', 'Score');
+            data.addColumn('date', '$dateLang');
+            data.addColumn('number', '$spentLang');
             data.addRows([";
     $sql2 = "SELECT * FROM $module";
     $tempDays = 0;
@@ -401,23 +418,24 @@ function drawAverageGraph($module) {
 
 function passWordChange() {
     include("config.php");
+    include("$languagefile");
     echo "
-                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Change password <mark> $_COOKIE[name]</mark></legend>
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>$changePasswordLang <mark> $_COOKIE[name]</mark></legend>
         <form method=\"POST\" action=\"index.php?changedPass=true\">
-        Old password *<br><input type=\"password\" name=\"oldPass\" size=\"40\" placeholder=\"Enter old password\"><br><br>
-        New password *<br><input type=\"password\" name=\"newPass\" size=\"40\" placeholder=\"Enter new password\"><br><br>
-        Repeat new password *<br><input type=\"password\" name=\"repeatPass\" size=\"40\" placeholder=\"Repeat new password\"><br><br>
-        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"Change password\"><div>
+        $oldPasswordLang *<br><input type=\"password\" name=\"oldPass\" size=\"40\" placeholder=\"$oldPasswordPlaceholderLang\"><br><br>
+        $newasswordLang *<br><input type=\"password\" name=\"newPass\" size=\"40\" placeholder=\"$newPasswordPlaceholderLang\"><br><br>
+        $newRepeatPasswordLang *<br><input type=\"password\" name=\"repeatPass\" size=\"40\" placeholder=\"$newRepeatPasswordPlaceholderLang\"><br><br>
+        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$changePasswordLang\"><div>
         </form>
         </fieldset><div>
 ";
     if ($_COOKIE["noSame"] == True) {
-        echo "<p color=\"red\"> New passwords does not match. Try again.</p>";
+        echo "<p color=\"red\"> $newasswordMatchLang</p>";
         setcookie("noSame", True, time() - (300), "/");
     }
 
     if ($_COOKIE["noOld"] == True) {
-        echo "<p color=\"red\"> Old password does not match. Try again.</p>";
+        echo "<p color=\"red\"> $oldPasswordMatchLang</p>";
         setcookie("noOld", True, time() - (300), "/");
     }
 }
@@ -466,26 +484,27 @@ function passWordChangeSave($oldPass, $newPass, $RepeatPass) {
 
 function addRecordShow() {
     include("config.php");
+    include("$languagefile");
     echo "
-                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add record</legend>
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>$addRecordLang</legend>
         <form method=\"POST\" action=\"index.php?addedRecord=true\">
-        Date* <br><input type=\"date\" id=\"today\" name=\"date\" min=\"" . date("Y-m-d") . "\" max=\"2100-12-31\" value=\"" . date("Y-m-d") . "\"><br>";
+        $dateLang* <br><input type=\"date\" id=\"today\" name=\"date\" min=\"" . date("Y-m-d") . "\" max=\"2100-12-31\" value=\"" . date("Y-m-d") . "\"><br>";
     if ($moduleGas == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"gas\"> Gas*<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"gas\"> $gasLang*<br>";
     }
     if ($moduleEE == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"ee\"> Electricity*<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"ee\"> $eeLang*<br>";
     }
     if ($moduleWater == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"water\"> Water*<br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"water\"> $waterLang*<br>";
     }
     if ($moduleHotWater == true) {
-        echo"<input type=\"radio\" name=\"energy\" value=\"hotWater\">Hot Water*<br><br>";
+        echo"<input type=\"radio\" name=\"energy\" value=\"hotWater\">$hotWaterLang*<br><br>";
     }
-    echo "Score with possible 3 decimal numbers rounded up:*<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"266 or 345.345\" style=\"width: 20em;\" step=0.001><br>
-        Inicial <input type=\"checkbox\" name=\"inicial\" value=\"0\"><br>
-        Note <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
-        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"AddRecord\" align=\"right\"><div>
+    echo "$scoreFormLang*<br><input type=\"number\" name=\"score\" size=\"10\"  placeholder=\"$scoreFormPlaceholderLang\" style=\"width: 20em;\" step=0.001><br>
+        $inicialLang <input type=\"checkbox\" name=\"inicial\" value=\"0\"><br>
+        $noteLang <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"$noteLang\"><br><br>
+        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$addRecordLang\" align=\"right\"><div>
         </form>
         </fieldset><div>
 ";
@@ -493,6 +512,7 @@ function addRecordShow() {
 
 function addRecordSave($date, $energy, $score, $inicial, $note) {
     include("config.php");
+    include("$languagefile");
 if (($date >= getLastDate($energy)) && (($date!="") && ($energy!="") && ($score!=""))){
     if (!$inicial) {
         $inicial = 0;
@@ -503,23 +523,24 @@ if (($date >= getLastDate($energy)) && (($date!="") && ($energy!="") && ($score!
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
-    echo "Record succesfully added. <br>";}
+    echo "$recordAddedLang <br>";}
 else    {
-    echo "Something is missing.";
+    echo "$missingLang";
     addRecordShow ();
 }}
 
 function addUser() {
     include("config.php");
+    include("$languagefile");
     echo "
-                <div align=\"center\"><fieldset style=\"width:30%\"><legend>Add user:</legend>
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>$addUser:</legend>
         <form method=\"POST\" action=\"index.php?register=true\">
-        username *<br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\"><br>
-        password *<br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\"><br><br>
-        email <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\"><br><br>
-        note <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
-        group <br><input type=\"number\" name=\"group\" size=\"40\" placeholder=\"id of group,default is 1\"><br>
-        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"Register\"><div>
+        $usernameLang *<br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\"><br>
+        $passwordLang *<br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\"><br><br>
+        $emailLang <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\"><br><br>
+        $noteLang <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\"><br><br>
+        $groupLang <br><input type=\"number\" name=\"group\" size=\"40\" placeholder=\"$groupPlaceholderLang\"><br>
+        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$registerLang\"><div>
         </form>
         </fieldset><div>
 ";
@@ -527,6 +548,7 @@ function addUser() {
 
 function registerUser($username, $password, $email, $group, $note) {
     include("config.php");
+    include("$languagefile");
     $password.=$secret;
     $password = md5($password);
     $noted = "";
@@ -538,7 +560,7 @@ function registerUser($username, $password, $email, $group, $note) {
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
-    echo "User $username was added successfully. ";
+    echo "$userAdded1Lang $username $userAdded2Lang";
 }
 
 function getHighestid($table) {
@@ -556,6 +578,7 @@ function getHighestid($table) {
 
 function statistics($energy) {
     include("config.php");
+    include("$languagefile");
     $lastOne = getHighestid($energy);
     $firstOne = $lastOne - $lastStatistics;
     //$sql = "SELECT * FROM $energy ORDER BY date ASC limit 10 offset $firstOne";
@@ -573,13 +596,13 @@ function statistics($energy) {
 
       function drawTable() {
         var data = new google.visualization.DataTable();
-        data.addColumn('date', 'Date');    
-        data.addColumn('number', 'Days');
-        data.addColumn('number', 'Score');
-        data.addColumn('number', 'Used');
-        data.addColumn('number', 'Daily average from last record');
-        data.addColumn('boolean', 'Inicial');
-        data.addColumn('string', 'Note');
+        data.addColumn('date', '$dateLang');    
+        data.addColumn('number', '$daysLang');
+        data.addColumn('number', '$scoreStatLang');
+        data.addColumn('number', '$usedLang');
+        data.addColumn('number', '$dailyAverageFromLastLang');
+        data.addColumn('boolean', '$inicialLang');
+        data.addColumn('string', '$noteLang');
         data.addRows([
         ";
 
@@ -661,24 +684,23 @@ formatter.format(data, 4); // Apply formatter to second column
     
 <div id=\"table_statistic$energy\" ></div>";
     }
+    $energyTemp=$energy;
     $energy = ucfirst($energy);
     $sql = "UPDATE tempStat SET 	user='" . $_COOKIE[name] . "', score$energy=$sum, sumScore$energy=$sumDays WHERE id='1'";
+    
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
-    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>Statistic for $energy</legend> $google ";
-    echo $sum;
-    if ($energy == "ee") {
-        echo "kWh";
-    } else
-        echo "m<sup>3</sup>";
-    echo" for ";
+    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>$statisticsForLang ${$energyTemp."Lang"}</legend> $google ";
+    echo $sum. $unit;
+    echo" $statistics1Lang ";
 
-    echo $sumDays . " days, with daily average : " . getstat($energy) . $unit . "</fieldset>";
+    echo $sumDays . $statistics2Lang . getstat($energy) . $unit . "</fieldset>";
 }
 
 function showPaymentRecords() {
     include("config.php");
+    include("$languagefile");
     $sql2 = "SELECT * FROM paymentRecords ORDER BY id ASC ";
 
     if (mysqli_connect_errno($con)) {
@@ -692,17 +714,17 @@ function showPaymentRecords() {
 
       function drawTable() {
         var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Kind');
-        data.addColumn('string', 'Customer number');
-        data.addColumn('string', 'payment');
-        data.addColumn('string', 'tariff');
-        data.addColumn('string', 'accounts');
-        data.addColumn('string', 'VS');
-        data.addColumn('string', 'CS');
-        data.addColumn('string', 'EIC');
-        data.addColumn('string', 'delivery point');
-        data.addColumn('string', 'consumption point');
-        data.addColumn('string', 'edit');
+        data.addColumn('string', '$kindLang');
+        data.addColumn('string', '$customerNumberLang');
+        data.addColumn('string', '$paymentLang');
+        data.addColumn('string', '$tarrifLang');
+        data.addColumn('string', '$accountsLang');
+        data.addColumn('string', '$vsLang');
+        data.addColumn('string', '$csLang');
+        data.addColumn('string', '$eicLang');
+        data.addColumn('string', '$deliveryPointLang');
+        data.addColumn('string', '$consumptionPoingLang');
+        data.addColumn('string', '$editLang');
         data.addRows([
 ";
 
@@ -732,29 +754,31 @@ function showPaymentRecords() {
     
 <div id=\"table_payment_records\" ></div>";
     }
-    echo "<fieldset style=\"margin: 20 20% 50 20%;\"><legend>Payment records</legend> $google <br> <a href='index.php?addPaymentRecord=true'>Add payment record</a></fieldset>";
+    echo "<fieldset style=\"margin: 20 20% 50 20%;\"><legend>$showPaymentRecordLang</legend> $google <br> <a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a></fieldset>";
 }
 
 function addPaymentRecord() {
     include("config.php");
+    include("$languagefile");
     echo "<form method=\"POST\" action=\"index.php?addPaymentRecordSave=true\">
-Kind<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $kind . "\"><br>
-Customer number<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $customerNumber . "\"><br>
-payment<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $payment . "\"><br>
-Tariff<br><input type=\"text\" name=\"tariff\" size=\"40\" placeholder=\"\" value=\"" . $tariff . "\"><br>
-bankAccounts<br><input type=\"text\" name=\"bankAccounts\" size=\"40\" placeholder=\"\" value=\"" . $bankAccounts . "\"><br>
-Variable<br><input type=\"number\" name=\"Variable\" size=\"40\" placeholder=\"\" value=\"" . $Variable . "\"><br>
-Constant<br><input type=\"number\" name=\"Constant\" size=\"40\" placeholder=\"\" value=\"" . $Constant . "\"><br>
-EIC<br><input type=\"text\" name=\"EIC\" size=\"40\" placeholder=\"\" value=\"" . $EIC . "\"><br>
-delivery Point<br><input type=\"number\" name=\"deliveryPoint\" size=\"40\" placeholder=\"\" value=\"" . $deliveryPoint . "\"><br>
-consumption Point<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\" placeholder=\"\" value=\"" . $consumptionPoint . "\"><br>
+$kindLang<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $kind . "\"><br>
+$customerNumberLang number<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $customerNumber . "\"><br>
+$paymentLang<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $payment . "\"><br>
+$tarrifLang<br><input type=\"text\" name=\"tariff\" size=\"40\" placeholder=\"\" value=\"" . $tariff . "\"><br>
+$accountsLang<br><input type=\"text\" name=\"bankAccounts\" size=\"40\" placeholder=\"\" value=\"" . $bankAccounts . "\"><br>
+$vsLang<br><input type=\"number\" name=\"Variable\" size=\"40\" placeholder=\"\" value=\"" . $Variable . "\"><br>
+$csLang<br><input type=\"number\" name=\"Constant\" size=\"40\" placeholder=\"\" value=\"" . $Constant . "\"><br>
+$eicLang<br><input type=\"text\" name=\"EIC\" size=\"40\" placeholder=\"\" value=\"" . $EIC . "\"><br>
+$deliveryPointLang<br><input type=\"number\" name=\"deliveryPoint\" size=\"40\" placeholder=\"\" value=\"" . $deliveryPoint . "\"><br>
+$consumptionPoingLang<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\" placeholder=\"\" value=\"" . $consumptionPoint . "\"><br>
 
-<input id=\"button\" type=\"submit\" name=\"submit\" value=\"Add\">
+<input id=\"button\" type=\"submit\" name=\"submit\" value=\"$addLang\">
 </form>   ";
 }
 
 function addPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAccounts, $Variable, $Constant, $EIC, $deliveryPoint, $ConsumptionPoint) {
     include("config.php");
+    include("$languagefile");
     if ((isset($kind) && ($kind != '')) && (isset($customerNumber) && ($customerNumber != '')) && (isset($payment) && ($payment != '') ) && (isset($tariff) && ($tariff != '')) && (isset($bankAccounts) && ($bankAccounts != '')) && (isset($Variable) && ($Variable != '')) && (isset($Constant) && ($Constant != '')) && (isset($EIC) && ($EIC != '')) && (isset($deliveryPoint) && ($deliveryPoint != '')) && (isset($ConsumptionPoint) && ($ConsumptionPoint != ''))) {
 
         $sql = "INSERT INTO paymentRecords(kind, customerNumber, payment, tariff, bankAccounts, Variable, Constant, EIC, deliveryPoint, ConsumptionPoint) VALUES('$kind','$customerNumber','$payment','$tariff','$bankAccounts','$Variable','$Constant','$EIC','$deliveryPoint','$ConsumptionPoint')";
@@ -763,17 +787,17 @@ function addPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAc
         if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
         } else
-            echo "Record sucessfully added";
+            echo $recordSucessfullyAddedLang;
     }
     else {
-        echo "<h1 style='color:red'>Fill all fields! </h1><br>";
+        echo "<h1 style='color:red'>$fillAllFieldsLang</h1><br>";
         addPaymentRecord($kind, $customerNumber, $payment, $tariff, $bankAccounts, $Variable, $Constant, $EIC, $deliveryPoint, $ConsumptionPoint);
     }
 }
 
 function editPaymentRecord($id) {
     include("config.php");
-
+    include("$languagefile");
     $sql2 = "SELECT * FROM paymentRecords WHERE id=$id";
 
     if (mysqli_connect_errno($con)) {
@@ -782,19 +806,19 @@ function editPaymentRecord($id) {
         $result2 = mysqli_query($con, $sql2);
         while ($row2 = mysqli_fetch_array($result2)) {
             echo "<form method=\"POST\" action=\"index.php?editPaymentRecordSave=true\">
-Kind<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $row2["kind"] . "\"><br>
-Customer number<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $row2["customerNumber"] . "\"><br>
-payment<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $row2["payment"] . "\"><br>
-Tariff<br><input type=\"text\" name=\"tariff\" size=\"40\" placeholder=\"\" value=\"" . $row2["tariff"] . "\"><br>
-bankAccounts<br><input type=\"text\" name=\"bankAccounts\" size=\"40\" placeholder=\"\" value=\"" . $row2["bankAccounts"] . "\"><br>
-Variable<br><input type=\"number\" name=\"Variable\" size=\"40\" placeholder=\"\" value=\"" . $row2["Variable"] . "\"><br>
-Constant<br><input type=\"number\" name=\"Constant\" size=\"40\" placeholder=\"\" value=\"" . $row2["Constant"] . "\"><br>
-EIC<br><input type=\"text\" name=\"EIC\" size=\"40\" placeholder=\"\" value=\"" . $row2["EIC"] . "\"><br>
-delivery Point<br><input type=\"number\" name=\"deliveryPoint\" size=\"40\" placeholder=\"\" value=\"" . $row2["deliveryPoint"] . "\"><br>
-consumption Point<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\" placeholder=\"\" value=\"" . $row2["consumptionPoint"] . "\"><br>
+$kindLang<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $row2["kind"] . "\"><br>
+$customerNumberLang<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $row2["customerNumber"] . "\"><br>
+$paymentLang<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $row2["payment"] . "\"><br>
+$tarrifLang<br><input type=\"text\" name=\"tariff\" size=\"40\" placeholder=\"\" value=\"" . $row2["tariff"] . "\"><br>
+$accountsLang<br><input type=\"text\" name=\"bankAccounts\" size=\"40\" placeholder=\"\" value=\"" . $row2["bankAccounts"] . "\"><br>
+$vsLang<br><input type=\"number\" name=\"Variable\" size=\"40\" placeholder=\"\" value=\"" . $row2["Variable"] . "\"><br>
+$csLang<br><input type=\"number\" name=\"Constant\" size=\"40\" placeholder=\"\" value=\"" . $row2["Constant"] . "\"><br>
+$eicLang<br><input type=\"text\" name=\"EIC\" size=\"40\" placeholder=\"\" value=\"" . $row2["EIC"] . "\"><br>
+$deliveryPointLang<br><input type=\"number\" name=\"deliveryPoint\" size=\"40\" placeholder=\"\" value=\"" . $row2["deliveryPoint"] . "\"><br>
+$consumptionPoingLang<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\" placeholder=\"\" value=\"" . $row2["consumptionPoint"] . "\"><br>
 <br><input type=\"hidden\" name=\"id\" size=\"40\" value=\"$row2[id]\"><br>
 
-<input id=\"button\" type=\"submit\" name=\"submit\" value=\"Change\">
+<input id=\"button\" type=\"submit\" name=\"submit\" value=\"$editLang\">
 </form>   ";
         }
     }
@@ -802,6 +826,7 @@ consumption Point<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\
 
 function editPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAccounts, $Variable, $Constant, $EIC, $deliveryPoint, $ConsumptionPoint, $id) {
     include("config.php");
+    include("$languagefile");
     if ((isset($kind) && ($kind != '')) && (isset($customerNumber) && ($customerNumber != '')) && (isset($payment) && ($payment != '') ) && (isset($tariff) && ($tariff != '')) && (isset($bankAccounts) && ($bankAccounts != '')) && (isset($Variable) && ($Variable != '')) && (isset($Constant) && ($Constant != '')) && (isset($EIC) && ($EIC != '')) && (isset($deliveryPoint) && ($deliveryPoint != '')) && (isset($ConsumptionPoint) && ($ConsumptionPoint != ''))) {
 
         $sql = "UPDATE paymentRecords SET kind='$kind', customerNumber='$customerNumber', payment='$payment', tariff='$tariff',"
@@ -810,10 +835,10 @@ function editPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankA
         if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
         } else
-            echo "Record sucessfully altered";
+            echo $recordSucessfullyAlteredLang;
     }
     else {
-        echo "<h1 style='color:red'>Fill all fields! </h1><br>";
+        echo "<h1 style='color:red'>$fillAllFieldsLang</h1><br>";
         editPaymentRecord($id);
     }
 }

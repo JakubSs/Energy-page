@@ -53,11 +53,15 @@ if (isset($_POST["dbname"]) && isset($_POST["dbserver"]) && isset($_POST["dbuser
 \$dbname = \"$dbname\";
 \$con = mysqli_connect(\$dbservername, \$dbusername, \$dbpassword, \$dbname);
 
+\$language=\"en_EN\";
+\$languagefile=\$language . \".php\";
+require_once(\"\$languagefile\");
+
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-07-18\";
-\$version = \"2.1\";
+\$releaseDate = \"2017-08-08\";
+\$version = \"2.2\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
