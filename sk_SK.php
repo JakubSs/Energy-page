@@ -7,21 +7,24 @@ $eeLang="Elektrina";
 $waterLang="Voda";
 $hotWaterLang="Teplá voda";
 
+$homeLang="Domov";
+
 $headingLang="Stránka spotreby energií, databáza $dbname";
 $SystemLang="Systémové:";
 $logoutLang="Odhlásiť ";
 $changePasswordLang="Zmeniť heslo";
 $editConfigurationLang="Upraviť nastavnia";
 $addUser="Pridať používateľa";
-$FunctionsLang="Funkcie:";
+$FunctionsLang="Funkcie";
 $addRecordLang="Pridať odpočet";
 $showPaymentRecordLang="Zobraziť platobné detaily";
 $addPaymentRecordLang="Pridať platobný detail";
+$editPaymentRecordLang="Upraviť platobný detail";
 $statisticsLang="Štatistiky";
 $statisticsForLang="Štatistiky pre  ";
 $GraphLang="Grafy";
 $graphForLang="Grafy pre ";
-$AverageGraphLang="Priemerné gragy:";
+$AverageGraphLang="Priemerné grafy:";
 $averageGraphForLang="Priemerný graf pre ";
 $changeLang="Zmeniť";
 $addLang="Pridať";

@@ -19,19 +19,20 @@ if (!isset($_POST["user"]) && !isset($_COOKIE["PHPSESSID"])) {
         setcookie("name2", $_COOKIE["name2"], time() - (300), "/");
     }
     echo "
-        <div align=\"center\">
-        <fieldset style=\"width:30%\"><legend>Log in</legend>
-<form method=\"POST\" action=\"login.php\">
-User <br><input type=\"text\" name=\"user\" size=\"40\" value=\"$tmp\"><br>
-Password <br><input type=\"password\" name=\"pass\" size=\"40\"><br><br>
+        <div class=\"container\" >
+        
+<form class=\"form-signin\" method=\"POST\" action=\"login.php\">
+<h3 class=\"form-signin-heading\" style=\"text-align: center\">Log-In</h3>
+User <br><input type=\"text\" name=\"user\" size=\"30\" value=\"$tmp\"><br>
+Password <br><input type=\"password\" name=\"pass\" size=\"30\"><br><br>
 ";
     if ($_COOKIE["wrong"] == True) {
         echo "<p color=\"red\"> Wrong username or password. Try again.</p>";
     }
     echo "
-<input id=\"button\" type=\"submit\" name=\"submit\" value=\"Log-In\">
+<button class=\"btn btn-primary\" id=\"button\" type=\"submit\" name=\"submit\" value=\"Log-In\">Log-In</button>
 </form>
-</fieldset>
+
 </div>
     ";
     setcookie("wrong", True, time() - (300), "/");

@@ -3,9 +3,9 @@ if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
             </script>";
-} else if (file_exists("config.php") && file_exists("install-remove.php")) {
+} else if (file_exists("config.php") && file_exists("install.php")) {
 
-    $file = "install-remove.php";
+    $file = "install.php";
     unlink($file);
 } else {
     require_once("config.php");
@@ -25,68 +25,83 @@ if (isset($_COOKIE["needReload"])) {
     <head>
         <meta charset="UTF-8">
         <title>Resources page <?php echo $version; ?></title>
+        <link href="./style.css" rel="stylesheet" type="text/css">
     </head>
     <body><div align="center">
-            <h1><?php echo $headingLang ?></h1>
+            <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+              <div style="text-align: center;">
+                  <span class="brand" style="float: none;"><?php echo $headingLang ?></span>
+                  <?php echo "<a href='/'><img src='$logo' height='50px'></a><br>"; ?>
+              </div>
+          </div>
+      </div>
+            
 <?php
 //echo $_COOKIE[name]." - ".$_COOKIE[name2]." - ".$_COOKIE[PHPSESSID]." - ".$_COOKIE[wrong]. " ->".$_COOKIE[user_pass]. "<-";
-echo "<a href='/'><img src='$logo' height='50px'></a><br>";
+
 
 if (verificate() == false) {
 
     require_once("login.php");
 } else if (verificate() == true) {
     echo "
-                <fieldset style=\"margin: 20 25% 50 25%;\"><legend>Menu</legend>
-                    <table border=\"1\">
-                        <tr>
-                            <th>$SystemLang</th>
+        
+<div class=\"dropdown\">
+  <button class=\"dropbtn\">$SystemLang</button>
+  <div class=\"dropdown-content\">
+  <a href='index.php'>$homeLang</a>
+   <a href='index.php?logout=true'>$logoutLang $_COOKIE[name]</a>
+   <a href='index.php?passchange=true'>$changePasswordLang</a>
+   <a href='index.php?editConfig=true'>$editConfigurationLang</a>
+   <a href='index.php?adduser=true'>$addUser</a></td></tr>
+  </div>
+</div>";
 
-                        ";
-    echo "<td><a href='index.php?logout=true'>$logoutLang $_COOKIE[name]</a></td>";
+    echo "<div class=\"dropdown\">
+  <button class=\"dropbtn\">$FunctionsLang</button>
+  <div class=\"dropdown-content\">
+   <a href='index.php?addRecord=true'>$addRecordLang</a>
+   <a href='index.php?showPaymentRecords=true'>$showPaymentRecordLang</a>
+   <a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a>
+  </div>
+</div>";
+    
     if ($_GET["logout"] == true) {
         logout();
     }
-    
-    echo "<td><a href='index.php?passchange=true'>$changePasswordLang</a></td>";
-    echo "<td><a href='index.php?editConfig=true'>$editConfigurationLang</a></td>";
-    echo "<td><a href='index.php?adduser=true'>$addUser</a></td></tr>";
-    
-    
-    echo "<tr><th>$FunctionsLang:</th>";
-    echo "<td><a href='index.php?addRecord=true'>$addRecordLang</a></td>";
-    echo "<td><a href='index.php?showPaymentRecords=true'>$showPaymentRecordLang</a></td>";
-    echo "<td><a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a></td></tr>";
-    
-    
     if (count($modules) > 0) {
-        echo "<tr><th>$statisticsLang:</th>";
+        echo "<div class=\"dropdown\">
+  <button class=\"dropbtn\">$statisticsLang</button>
+  <div class=\"dropdown-content\">";
         foreach ($modules as &$modul) {
             $energyTemp=$modul;
-            echo "<td><a href='index.php?stat=" . $modul . "'>$statisticsForLang" . ${$energyTemp."Lang"} . "</a></td>";
+            echo "<a href='index.php?stat=" . $modul . "'>$statisticsForLang" . ${$energyTemp."Lang"} . "</a>";
         }
-        echo "</tr>";
+        echo "</div></div>";
     }
     if (count($modules) > 0) {
-        echo "<tr><th>$GraphLang:</th>";
+        echo "<div class=\"dropdown\">
+  <button class=\"dropbtn\">$GraphLang</button>
+  <div class=\"dropdown-content\">";
+        
         foreach ($modules as &$modul) {
             $energyTemp=$modul;
-            echo "<td><a href='index.php?graph=" . $modul . "'>$graphForLang " . ${$energyTemp."Lang"} . "</a></td>";
+            echo "<a href='index.php?graph=" . $modul . "'>$graphForLang " . ${$energyTemp."Lang"} . "</a>";
         }
-        echo "</tr>";
+        echo "</div></div>";
     }
     if (count($modules) > 0) {
-        echo "<tr><th>$AverageGraphLang</th>";
+        echo "<div class=\"dropdown\">
+  <button class=\"dropbtn\">$AverageGraphLang</button>
+  <div class=\"dropdown-content\">";
         foreach ($modules as &$modul) {
             $energyTemp=$modul;
             echo "<td><a href='index.php?averageGraph=" . $modul . "'>$averageGraphForLang " . ${$energyTemp."Lang"} . "</a></td>";
         }
-        echo "</tr>";
+        echo "</div></div>";
     }
-        
-    
-    
-echo "</table> </fieldset>";
+  
 
     if ($_GET["editConfig"] == true) {
         editConfigShow();

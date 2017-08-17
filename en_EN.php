@@ -8,6 +8,8 @@ $eeLang="Electricity";
 $waterLang="Water";
 $hotWaterLang="Hot water";
 
+$homeLang="Home";
+
 $headingLang="Energy page for database $dbname";
 $SystemLang="System:";
 $logoutLang="Logout ";
@@ -18,6 +20,7 @@ $FunctionsLang="Functions:";
 $addRecordLang="Add record";
 $showPaymentRecordLang="Show payment records";
 $addPaymentRecordLang="Add payment record";
+$editPaymentRecordLang="Edit payment record";
 $statisticsLang="Statistics:";
 $statisticsForLang="Statistics for ";
 $GraphLang="Graphs: ";

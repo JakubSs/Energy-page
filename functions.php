@@ -69,6 +69,7 @@ function showStat() {
 
     if (count($modules) > 0) {
         foreach ($modules as &$modul) {
+            $energyTemp=$modul;
 
             if ($modul == "ee") {
                 $unit = "kWh";
@@ -77,7 +78,7 @@ function showStat() {
             $score = round(getSpent($modul), 2);
             $average = round(getstat($modul), 2);
             $modul = ucfirst($modul);
-            $google.="['$modul',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'}],";
+            $google.="['${$energyTemp."Lang"}',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'}],";
         }
         $google.="]);
 
@@ -89,7 +90,7 @@ function showStat() {
     
 <div id=\"table_statistics\" ></div>";
     }
-    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>$statisticsLang</legend> $google </fieldset>";
+    echo "<fieldset ><legend>$statisticsLang</legend> $google </fieldset>";
     //echo $google;
 }
 
@@ -156,8 +157,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-08-08\";
-\$version = \"2.2\";
+\$releaseDate = \"2017-08-17\";
+\$version = \"2.3\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -250,7 +251,7 @@ require_once(\"\$languagefile\");
     fwrite($myfile, $txt);
     fclose($myfile);
     setcookie("needReload", True, 0, "/");
-    echo 'Configuration succesfully saved';}
+    echo '<br>Configuration succesfully saved';}
     else    {
         echo "Something is missing!";
         editConfigShow ();
@@ -691,7 +692,7 @@ formatter.format(data, 4); // Apply formatter to second column
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));
     }
-    echo "<fieldset style=\"margin: 20 30% 50 30%;\"><legend>$statisticsForLang ${$energyTemp."Lang"}</legend> $google ";
+    echo "<fieldset><legend>$statisticsForLang ${$energyTemp."Lang"}</legend> $google ";
     echo $sum. $unit;
     echo" $statistics1Lang ";
 
@@ -754,13 +755,13 @@ function showPaymentRecords() {
     
 <div id=\"table_payment_records\" ></div>";
     }
-    echo "<fieldset style=\"margin: 20 20% 50 20%;\"><legend>$showPaymentRecordLang</legend> $google <br> <a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a></fieldset>";
+    echo "<fieldset ><legend>$showPaymentRecordLang</legend> $google <br> <a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a></fieldset>";
 }
 
 function addPaymentRecord() {
     include("config.php");
     include("$languagefile");
-    echo "<form method=\"POST\" action=\"index.php?addPaymentRecordSave=true\">
+    echo "<fieldset ><legend>$addPaymentRecordLang</legend><form method=\"POST\" action=\"index.php?addPaymentRecordSave=true\">
 $kindLang<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $kind . "\"><br>
 $customerNumberLang number<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $customerNumber . "\"><br>
 $paymentLang<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $payment . "\"><br>
@@ -773,7 +774,7 @@ $deliveryPointLang<br><input type=\"number\" name=\"deliveryPoint\" size=\"40\" 
 $consumptionPoingLang<br><input type=\"number\" name=\"consumptionPoint\" size=\"40\" placeholder=\"\" value=\"" . $consumptionPoint . "\"><br>
 
 <input id=\"button\" type=\"submit\" name=\"submit\" value=\"$addLang\">
-</form>   ";
+</form> </fieldset>  ";
 }
 
 function addPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAccounts, $Variable, $Constant, $EIC, $deliveryPoint, $ConsumptionPoint) {
@@ -787,7 +788,7 @@ function addPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankAc
         if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
         } else
-            echo $recordSucessfullyAddedLang;
+            echo "<br>".$recordSucessfullyAddedLang;
     }
     else {
         echo "<h1 style='color:red'>$fillAllFieldsLang</h1><br>";
@@ -805,7 +806,7 @@ function editPaymentRecord($id) {
     } else {
         $result2 = mysqli_query($con, $sql2);
         while ($row2 = mysqli_fetch_array($result2)) {
-            echo "<form method=\"POST\" action=\"index.php?editPaymentRecordSave=true\">
+            echo "<fieldset ><legend>$editPaymentRecordLang</legend><form method=\"POST\" action=\"index.php?editPaymentRecordSave=true\">
 $kindLang<br><input type=\"text\" name=\"kind\" size=\"40\" placeholder=\"\" value=\"" . $row2["kind"] . "\"><br>
 $customerNumberLang<br><input type=\"number\" name=\"customerNumber\" size=\"40\" placeholder=\"\" value=\"" . $row2["customerNumber"] . "\"><br>
 $paymentLang<br><input type=\"text\" name=\"payment\" size=\"40\" placeholder=\"\" value=\"" . $row2["payment"] . "\"><br>
@@ -819,7 +820,7 @@ $consumptionPoingLang<br><input type=\"number\" name=\"consumptionPoint\" size=\
 <br><input type=\"hidden\" name=\"id\" size=\"40\" value=\"$row2[id]\"><br>
 
 <input id=\"button\" type=\"submit\" name=\"submit\" value=\"$editLang\">
-</form>   ";
+</form> </fieldset>  ";
         }
     }
 }
@@ -835,7 +836,7 @@ function editPaymentRecordSave($kind, $customerNumber, $payment, $tariff, $bankA
         if (!mysqli_query($con, $sql)) {
             die('Error: ' . mysqli_error($con));
         } else
-            echo $recordSucessfullyAlteredLang;
+            echo "<br>".$recordSucessfullyAlteredLang;
     }
     else {
         echo "<h1 style='color:red'>$fillAllFieldsLang</h1><br>";
