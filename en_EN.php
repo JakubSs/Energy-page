@@ -30,6 +30,7 @@ $averageGraphForLang="Averge graph for ";
 $changeLang="Change";
 $addLang="Add";
 $spentLang="Spent";
+$allSpentLang="All spent average";
 $dailyAverageLang="Daily average";
 $yearlyAssumptionLang="Yearly assumption";
 
@@ -93,5 +94,22 @@ $dailyAverageFromLastLang="Daily average from last record";
 $statistics1Lang=" for ";
 $statistics2Lang=" days, with daily average: ";
 
+$temperatureLang="Temperature";
+
 $footerLang="This is energy page version $version made by $Author with release date ". $releaseDate .". My page is <a href='$link'>$link</a>";
 
+$aboutMeLang="About app";
+
+$averageTempLang="Av temperature";
+$tMAXLang="Max t";
+$tMINLang="Min t";
+
+$priceForPlaceMonthlyGasLang="Fix month payment (gas)";
+$gasToKwhLang="Ratio of kWh in m<sup>3</sup>";
+$priceForGasKwhLang="Price for kWh of Gas";
+
+$priceForPlaceMonthlyEELang="Price for sale point (ee)";
+$priceForEEKwhLang='Price for kWh of ee';
+
+$countPriceLang="Count price?";
+$yearlyPriceLang="Premise of year invoice";

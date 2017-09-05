@@ -19,4 +19,8 @@ energie-demo.sedinar.eu
 Release Notes
 2.3:
 - new graphic
-- minor changes
+- minor changes<br>
+2.4:
+- added support for temperature into statistics (for now, import from meteo.ajtyk.sk)
+- graph of temperatures
+- premise of year invoice

@@ -184,3 +184,17 @@ fieldset{
     margin-left: auto;
     border: none;
 }
+
+.aboutMe
+{
+    padding-left: 1%;
+    padding-right: 1%;
+    text-align: justify;
+    border-top-style: outset;
+    border-right-style: outset;
+    border-bottom-style: outset;
+    border-left-style: outset;
+    margin-top: 2%;
+    margin-left: 30%;
+    margin-right: 30%;
+}

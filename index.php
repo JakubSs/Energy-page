@@ -1,4 +1,7 @@
 <?php
+//ini_set('display_errors', 10);
+//ini_set('display_startup_errors',10);
+//error_reporting(E_ALL);
 if (!file_exists("config.php")) {
     echo "<script type=\"text/javascript\">
             window.location = \"install.php\"
@@ -55,6 +58,7 @@ if (verificate() == false) {
    <a href='index.php?passchange=true'>$changePasswordLang</a>
    <a href='index.php?editConfig=true'>$editConfigurationLang</a>
    <a href='index.php?adduser=true'>$addUser</a></td></tr>
+   <a href='index.php?aboutMe=true'>$aboutMeLang</a></td></tr>
   </div>
 </div>";
 
@@ -66,7 +70,6 @@ if (verificate() == false) {
    <a href='index.php?addPaymentRecord=true'>$addPaymentRecordLang</a>
   </div>
 </div>";
-    
     if ($_GET["logout"] == true) {
         logout();
     }
@@ -113,7 +116,10 @@ if (verificate() == false) {
         passWordChangeSave($_POST["oldPass"], $_POST["newPass"], $_POST["repeatPass"]);
     }
     else if ($_GET["newConfig"] == true) {
-        editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"], $_POST["secret"], $_POST["lastStatistics"], $_POST["language"]);
+        editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"],
+                $_POST["secret"], $_POST["lastStatistics"], $_POST["language"], $_POST["temperature"], $_POST["countPrice"],
+                $_POST["priceForPlaceMonthlyGas"], $_POST["gasToKwh"], $_POST["priceForGasKwh"], $_POST["priceForPlaceMonthlyEE"],
+                $_POST["priceForEEKwh"], $_POST["sourceOfTemperature"]);
     }
     
     else if ($_GET["addRecord"] == true) {
@@ -130,9 +136,13 @@ if (verificate() == false) {
 
     else if ($_GET["graph"]) {
         drawGraph($_GET["graph"]);
+        if ($temperatureIS==true){drawTemperatureGraph();}
+        echo "<br><br><br><br>";
     }
     else if ($_GET["averageGraph"]) {
         drawAverageGraph($_GET["averageGraph"]);
+        if ($temperatureIS==true){drawTemperatureGraph();}
+        echo "<br><br><br><br>";
     }
 
     else if ($_GET["adduser"] == true) {
@@ -157,12 +167,15 @@ if (verificate() == false) {
     else if ($_GET["addPaymentRecordSave"] == true) {
         addPaymentRecordSave($_POST["kind"], $_POST["customerNumber"], $_POST["payment"], $_POST["tariff"], $_POST["bankAccounts"], $_POST["Variable"], $_POST["Constant"], $_POST["EIC"], $_POST["deliveryPoint"], $_POST["consumptionPoint"]);
     }
+    else if ($_GET["aboutMe"] == true) {
+        aboutMe();
+    }
     else {
         if (count($modules) > 0)
             {showStat();}
         }
             
-
+        //saveActualTemperature();
     
     if ($_COOKIE["changed"] == True) {
         echo "<p color=\"red\">$changedPasswordLang</p>";

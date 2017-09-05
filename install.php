@@ -60,8 +60,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-08-17\";
-\$version = \"2.3\";
+\$releaseDate = \"2017-09-04\";
+\$version = \"2.4\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -108,6 +108,16 @@ $countOfModulesNamesPrint
     }
 
     $txt .="
+\$countPrice=false;    
+\$temperatureIS=false;
+\$priceForPlaceMonthlyGas=0;
+\$gasToKwh=0;
+\$priceForGasKwh=0;
+
+\$priceForPlaceMonthlyEE=0;
+\$priceForEEKwh=0;
+    
+\$sourceOfTemperature=\"https://meteo.ajtyk.sk/temperature.php\";
 
 ?>            ";
     fwrite($myfile, $txt);
@@ -236,6 +246,18 @@ $countOfModulesNamesPrint
   `deliveryPoint` bigint(12) NOT NULL,
   `consumptionPoint` bigint(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovak_ci;";
+
+    if (!mysqli_query($con, $sql)) {
+        die('Error: ' . mysqli_error($con));
+    }
+        $sql = "CREATE TABLE `temperature` ( 
+                `id` INT(11) NOT NULL AUTO_INCREMENT ,
+                `date` DATETIME NOT NULL , 
+                `year` YEAR(4) NOT NULL , 
+                `score` DECIMAL(11,4) NOT NULL , 
+                `inicial` TINYINT NULL DEFAULT NULL , 
+                `note` VARCHAR(300) NOT NULL , PRIMARY KEY (`id`)
+                ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_slovak_ci;";
 
     if (!mysqli_query($con, $sql)) {
         die('Error: ' . mysqli_error($con));

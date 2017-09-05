@@ -29,6 +29,7 @@ $averageGraphForLang="Priemerný graf pre ";
 $changeLang="Zmeniť";
 $addLang="Pridať";
 $spentLang="Minuté";
+$allSpentLang="Celkový priemer";
 $dailyAverageLang="Denný priemer";
 $yearlyAssumptionLang="Ročný predpoklad";
 
@@ -91,6 +92,25 @@ $dailyAverageFromLastLang="Denný priemer od posledného merania";
 
 
 $statistics1Lang=" za ";
-$statistics2Lang=" dní, s denný priemerom: ";
+$statistics2Lang=" dní, s denným priemerom: ";
+
+$temperatureLang="Teplota";
+$sourceOfTemperatureLang="Zdroj teplôt";
 
 $footerLang="Toto je stránka štatistík energií, vo verzii $version vytvorená $Author s dátumom releasu ". $releaseDate .". Moja webstránka je <a href='$link'>$link</a>";
+
+$aboutMeLang="O aplikácii";
+
+$averageTempLang="Priem teplota";
+$tMAXLang="Max teplota";
+$tMINLang="Min teplota";
+
+$priceForPlaceMonthlyGasLang="Fixná mesačná platba (plyn)";
+$gasToKwhLang="pomer KWh na m<sup>3</sup>";
+$priceForGasKwhLang="Cena za kWh plynu";
+
+$priceForPlaceMonthlyEELang="Cena za obchodné miesto (elektrina)";
+$priceForEEKwhLang='Cena za kWh elektriny';
+
+$countPriceLang="Počítať cenu?";
+$yearlyPriceLang="Predpoklad ročnej fa";
