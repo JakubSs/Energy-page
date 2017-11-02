@@ -144,6 +144,7 @@ function getstat($model) {
         $sumScore = "SumScore" . $model;
         $unit = $row2[$score];
         $days = $row2[$sumScore];
+        if ($days==0){$days=1;}
         $dailyAverage = $unit / $days;
         return $dailyAverage;
     }
@@ -516,6 +517,7 @@ function drawAverageGraph($module) {
             $year = substr($row2['date'], 0, 4);
             $month = (substr($row2['date'], -5, 2)) - 1;
             $day = substr($row2['date'], -2, 2);
+            if ($days_between==0){$days_between=1;}
             $average = (($row2['score'] - $last) / $days_between);
 
             echo "
@@ -709,7 +711,7 @@ function statistics($energy) {
     $lastOne = getHighestid($energy);
     $firstOne = $lastOne - $lastStatistics;
     //$sql = "SELECT * FROM $energy ORDER BY date ASC limit 10 offset $firstOne";
-    $sql = "SELECT * FROM $energy";
+    $sql = "SELECT * FROM $energy WHERE date > current_date - interval '365' day;";
     //echo $sql;
 
     if (mysqli_connect_errno($con)) {
@@ -750,6 +752,8 @@ function statistics($energy) {
         $lastdate = 0;
         $tempDays = 0;
         $page=0;
+        $first1=true;
+        $first2=true;
         while ($row = mysqli_fetch_array($result)) {
 $page++;
 
@@ -759,9 +763,14 @@ $page++;
 //$inicial="";
 
             $temp = $row['score'] - $last;
-            if ($row['inicial'] == 1) {
+            if ($first1==true) {
                 $temp = 0;
             }
+            if ($row['inicial'] == 1 || $first1==true) {
+                $temp = 0;
+                $first1=false;
+            }
+            
             $sum+=$temp;
             $tempDays = $row['date'];
             $days_between = $tempDays - $lastdate;
@@ -772,13 +781,14 @@ $page++;
 
             $days_between = ceil(abs($end - $start) / 86400);
 
-            if ($row['inicial'] == 1) {
+            if ($row['inicial'] == 1 || $first2==true) {
                 $sumDays = 0;
                 $days_between = 0;
+                $first2=false;
             } else {
                 $sumDays+=$days_between;
             }
-            if (($temp / $days_between) > (getstat($energy))) {
+            if ((($temp / $days_between) > (getstat($energy))) && $days_between!=0) {
                 $a = "style=\"color: red;\"";
             } else {
                 $a = "style=\"color: blue;\"";
@@ -825,12 +835,14 @@ $page++;
                         . "f: '".round($row['score'], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: ";
                 
                 if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
                     $google.= ($temp / $days_between);
                 } else
                     $google.="0";
                 
                 $google .=", f: '";  ;
                 if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
                     $google.= ($temp / $days_between);
                 } else
                     $google.="0";
@@ -847,12 +859,14 @@ $page++;
                         . "f: '".round($row['score'], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: " ;
                          
                  if ($row['inicial'] == 0) {
+                     if ($days_between==0){$days_between=1;}
                     $google.= ($temp / $days_between);
                 } else
                     $google.="0";
                 
                 $google .=", f: '";  ;
                 if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
                     $google.= ($temp / $days_between);
                 } else
                     $google.="0";
@@ -891,7 +905,7 @@ formatter.format(data, 4); // Apply formatter to second column
     echo "<fieldset><legend>$statisticsForLang ${$energyTemp."Lang"}</legend> $google ";
     echo $sum. $unit;
     echo" $statistics1Lang ";
-    $averageTemps=getAverageTemperature("2017-01-01", date("Y-m-d"));
+    $averageTemps=getAverageTemperature(date("Y")."-01-01", date("Y-m-d"));
     echo $sumDays . $statistics2Lang . getstat($energy) . $unit .".";
 if ($temperatureIS==true){ echo " $averageTempLang: $averageTemps[0] °C. $tMAXLang: $averageTemps[1] °C. $tMINLang: $averageTemps[2] °C.</fieldset>";}
 }
@@ -1118,6 +1132,7 @@ function getAverageTemperature($start, $end) {
         {$minTemperature=$row['score'];}
     }
         //echo $averageTemperature/$records.", $maxTemperature, $minTemperature";
+        if ($records==0){$records=1;}
         return array (round($averageTemperature/$records, 1), round($maxTemperature, 1), round($minTemperature, 1), $records);
     
 }
