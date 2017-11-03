@@ -60,8 +60,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-09-04\";
-\$version = \"2.4\";
+\$releaseDate = \"2017-11-03\";
+\$version = \"2.5\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -116,6 +116,12 @@ $countOfModulesNamesPrint
 
 \$priceForPlaceMonthlyEE=0;
 \$priceForEEKwh=0;
+
+\$priceForPlaceMonthlyWater=0;
+\$priceForM3Water=0;
+
+\$priceForPlaceMonthlyHotWater=0;
+\$priceForM3HotWater=0;
     
 \$sourceOfTemperature=\"https://meteo.ajtyk.sk/temperature.php\";
 

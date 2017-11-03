@@ -87,6 +87,12 @@ function showStat() {
             else if ($countPrice==true && $modul=="Ee"){
             $google.="['${$energyTemp."Lang"}',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'},  {v: " . (($priceForPlaceMonthlyEE*12)+(($average * 365)*$priceForEEKwh)) . ", f: '" . (($priceForPlaceMonthlyEE*12)+(($average * 365)*$priceForEEKwh)) . " €'}],";
             }
+            else if ($countPrice==true && $modul=="Water"){
+            $google.="['${$energyTemp."Lang"}',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'},  {v: " . (($priceForPlaceMonthlyWater*12)+(($average * 365)*$priceForM3Water)) . ", f: '" . (($priceForPlaceMonthlyWater*12)+(($average * 365)*$priceForM3Water)) . " €'}],";
+            }
+            else if ($countPrice==true && $modul=="HotWater"){
+            $google.="['${$energyTemp."Lang"}',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'},  {v: " . (($priceForPlaceMonthlyHotWater*12)+(($average * 365)*$priceForM3HotWater)) . ", f: '" . (($priceForPlaceMonthlyHotWater*12)+(($average * 365)*$priceForM3HotWater)) . " €'}],";
+            }
             else if ($countPrice==true){
                 //echo $modul;
             $google.="['${$energyTemp."Lang"}',  {v: $score, f: '$score $unit'},  {v: $average, f: '$average $unit'},  {v: " . ($average * 365) . ", f: '" . ($average * 365) . " $unit'},  {v: 0, f: 'NA'}],";
@@ -151,7 +157,7 @@ function getstat($model) {
 }
 
 function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $moduleGas, $moduleEE, $moduleWater, $moduleHotWater, $secret, $lastStatistics, $language,
-        $temperature, $countPrice, $priceForPlaceMonthlyGas, $gasToKwh, $priceForGasKwh, $priceForPlaceMonthlyEE, $priceForEEKwh, $sourceOfTemperature) {
+        $temperature, $countPrice, $priceForPlaceMonthlyGas, $gasToKwh, $priceForGasKwh, $priceForPlaceMonthlyEE, $priceForEEKwh, $sourceOfTemperature, $priceForPlaceMonthlyWater, $priceForM3Water, $priceForPlaceMonthlyHotWater, $priceForM3HotWater) {
     if (($dbname!="") && ($dbservername!="") && ($dbusername!="") && ($dbpassword!="") && ($secret!="") && ($lastStatistics!=""))
     {
     $availableModules = unserialize($_COOKIE['available']);
@@ -174,8 +180,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-09-04\";
-\$version = \"2.4\";
+\$releaseDate = \"2017-11-03\";
+\$version = \"2.5\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -290,6 +296,12 @@ require_once(\"\$languagefile\");
 \$priceForPlaceMonthlyEE=$priceForPlaceMonthlyEE;
 \$priceForEEKwh=$priceForEEKwh;
     
+\$priceForPlaceMonthlyWater=$priceForPlaceMonthlyWater;
+\$priceForM3Water=$priceForM3Water;
+
+\$priceForPlaceMonthlyHotWater=$priceForPlaceMonthlyHotWater;
+\$priceForM3HotWater=$priceForM3HotWater;
+    
 \$sourceOfTemperature=\"$sourceOfTemperature\";
 ?>            ";
 
@@ -355,6 +367,10 @@ $gasToKwhLang *<br><input type=\"number\" name=\"gasToKwh\" size=\"40\" value=\"
 $priceForGasKwhLang *<br><input type=\"number\" name=\"priceForGasKwh\" size=\"40\" value=\"" . $priceForGasKwh . "\" step=0.001><br><br>
 $priceForPlaceMonthlyEELang *<br><input type=\"number\" name=\"priceForPlaceMonthlyEE\" size=\"40\" value=\"" . $priceForPlaceMonthlyEE . "\" step=0.001><br><br>
 $priceForEEKwhLang *<br><input type=\"number\" name=\"priceForEEKwh\" size=\"40\" value=\"" . $priceForEEKwh . "\" step=0.001><br><br>    
+$priceForPlaceMonthlyWaterLang *<br><input type=\"number\" name=\"priceForPlaceMonthlyWater\" size=\"40\" value=\"" . $priceForPlaceMonthlyWater . "\" step=0.001><br><br>
+$priceForM3WaterLang *<br><input type=\"number\" name=\"priceForM3Water\" size=\"40\" value=\"" . $priceForM3Water . "\" step=0.001><br><br>    
+$priceForPlaceMonthlyHotWaterLang *<br><input type=\"number\" name=\"priceForPlaceMonthlyHotWater\" size=\"40\" value=\"" . $priceForPlaceMonthlyHotWater . "\" step=0.001><br><br>
+$priceForM3HotWaterLang *<br><input type=\"number\" name=\"priceForM3HotWater\" size=\"40\" value=\"" . $priceForM3HotWater . "\" step=0.001><br><br>    
 
 <input type=\"hidden\" name=\"secret\" size=\"40\" value=\"$secret\"><br>
     
@@ -1136,3 +1152,232 @@ function getAverageTemperature($start, $end) {
         return array (round($averageTemperature/$records, 1), round($maxTemperature, 1), round($minTemperature, 1), $records);
     
 }
+
+function getDateForStatisticsDateSet()
+{
+    include("config.php");
+    include("$languagefile");
+    echo "
+                <div align=\"center\"><fieldset style=\"width:30%\"><legend>$statisticsForDateSetLang</legend>
+        <form method=\"POST\" action=\"index.php?dateSet=true\">
+        $statisticsForDateFromLang* <br><input type=\"date\" id=\"start\" name=\"start\"><br>
+        $statisticsForDateToLang* <br><input type=\"date\" id=\"end\" name=\"end\"><br><br>
+        $statisticsSelectModuleLang <br><select name=\"module\">";
+    if ($moduleGas == true) {
+        echo"<option value=\"gas\"> $gasLang*<br>";
+    }
+    if ($moduleEE == true) {
+        echo"<option value=\"ee\"> $eeLang*<br>";
+    }
+    if ($moduleWater == true) {
+        echo"<option value=\"water\"> $waterLang*<br>";
+    }
+    if ($moduleHotWater == true) {
+        echo"<option value=\"hotWater\">$hotWaterLang*<br><br>";
+    }
+        echo "</select><br><br>"
+    . ""
+                . "<input id=\"button\" type=\"submit\" name=\"submit\" value=\"$statisticsSubmitLang\">";
+    
+    
+    
+}
+
+function getStatisticsFromDateSet($start, $end, $module)
+{
+    include("config.php");
+    include("$languagefile");
+    //echo $start ." - ". $end ." - ".$module;
+    
+    $sql = "SELECT * FROM $module WHERE `date` BETWEEN '$start' AND '$end'";
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    } else $result = mysqli_query($con, $sql);
+    $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
+    <script type=\"text/javascript\">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', '$dateLang');    
+        data.addColumn('number', '$daysLang');
+        data.addColumn('number', '$scoreStatLang');
+        data.addColumn('number', '$usedLang');
+        data.addColumn('number', '$dailyAverageFromLastLang');
+        data.addColumn('boolean', '$inicialLang');
+        data.addColumn('string', '$noteLang');
+        ";
+        if ($temperatureIS==true){
+        $google .= "data.addColumn('number', '$averageTempLang');
+        data.addColumn('number', '$tMAXLang');
+        data.addColumn('number', '$tMINLang');";}
+        $google .= "data.addRows([
+        ";
+        
+        $last0=0;
+        $last1=0;
+        $last2=0;
+
+
+        $sum = 0;
+        $sumDays = 0;
+        $temp = 0;
+        $last = 0;
+        $lastdate = 0;
+        $tempDays = 0;
+        $page=0;
+        $first1=true;
+        $first2=true;
+    while ($row = mysqli_fetch_array($result)){
+        
+        $page++;
+
+            $id = $row['id'];
+
+
+//$inicial="";
+
+            $temp = $row['score'] - $last;
+            if ($first1==true) {
+                $temp = 0;
+            }
+            if ($row['inicial'] == 1 || $first1==true) {
+                $temp = 0;
+                $first1=false;
+            }
+            
+            $sum+=$temp;
+            $tempDays = $row['date'];
+            $days_between = $tempDays - $lastdate;
+
+
+            $start = strtotime($lastdate);
+            $end = strtotime($tempDays);
+
+            $days_between = ceil(abs($end - $start) / 86400);
+
+            if ($row['inicial'] == 1 || $first2==true) {
+                $sumDays = 0;
+                $days_between = 0;
+                $first2=false;
+            } else {
+                $sumDays+=$days_between;
+            }
+            if ((($temp / $days_between) > (getstat($module))) && $days_between!=0) {
+                $a = "style=\"color: red;\"";
+            } else {
+                $a = "style=\"color: blue;\"";
+            }
+
+            if ($module == "ee") {
+                $unit = "kWh";
+            } else
+                $unit = "m<sup>3</sup>";
+            //if (($row['id'] >= $firstOne) && ($row['id'] <= $lastOne)) {
+                $year = substr($row['date'], 0, 4);
+                $month = (substr($row['date'], -5, 2)) - 1;
+                $day = substr($row['date'], -2, 2);
+                if ($row['inicial'] == 1) {
+                    $tmpInicial = "true";
+                } else
+                    $tmpInicial = "false";
+                $averageTemps=getAverageTemperature($lastdate, $tempDays);
+//$google.="[new Date($year, $month, $day),  {v: $days_between, f: '$days_between'},{v: $row[score] , "
+  //                      . "f: '".round($row[score], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: " . ($temp / $days_between) . ", "
+     //                   . "f: '" . ($temp / $days_between) . $unit . "'}, $tmpInicial, '$row[note]', {v: $averageTemps[0], f: '".round($averageTemps[0], 2)." °C'},{v: $averageTemps[1], f: '".round($averageTemps[1], 2)." °C'},{v: $averageTemps[2], f: '".round($averageTemps[2], 2)." °C'}],
+//";
+                if ($temperatureIS==true){
+
+                    if (is_nan($averageTemps[0])==false){
+                    $averageTemp=$averageTemps[0];
+                    $averageTempRound=round($averageTemps[0], 2);
+                    $maxTemp=$averageTemps[1];
+                    $maxTempRound=round($averageTemps[1], 2);
+                    $minTemp=$averageTemps[2];
+                    $minTempRound=round($averageTemps[2], 2);
+                    }
+                    else {
+                    $averageTemp=$last0;
+                    $maxTemp=$last1;
+                    $minTemp=$last2;
+                    $averageTempRound="NA";
+                    $maxTempRound="NA";
+                    $minTempRound="NA";
+                    
+                    }
+                    
+                $google.="[new Date($year, $month, $day),  {v: $days_between, f: '$days_between'},{v: ".$row['score']." , "
+                        . "f: '".round($row['score'], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: ";
+                
+                if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
+                    $google.= ($temp / $days_between);
+                } else
+                    $google.="0";
+                
+                $google .=", f: '";  ;
+                if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
+                    $google.= ($temp / $days_between);
+                } else
+                    $google.="0";
+                
+                $google.= " ".$unit . "'}, $tmpInicial, '".$row['note']."', {v: $averageTemp, f: '$averageTempRound °C'},{v: $maxTemp, f: '$maxTempRound °C'},{v: $minTemp, f: '$minTempRound °C'}],
+";
+                /*$last0=$averageTempRound;
+                $last1=$maxTempRound;
+                $last2=$minTempRound;*/
+                }
+                else if ($temperatureIS==false)
+                {
+                 $google.="[new Date($year, $month, $day),  {v: $days_between, f: '$days_between'},{v: ".$row['score']." , "
+                        . "f: '".round($row['score'], 2)." $unit'},{v: $temp, f: '$temp $unit'},{v: " ;
+                         
+                 if ($row['inicial'] == 0) {
+                     if ($days_between==0){$days_between=1;}
+                    $google.= ($temp / $days_between);
+                } else
+                    $google.="0";
+                
+                $google .=", f: '";  ;
+                if ($row['inicial'] == 0) {
+                    if ($days_between==0){$days_between=1;}
+                    $google.= ($temp / $days_between);
+                } else
+                    $google.="0";
+                 
+                 $google.= " ".$unit . "'}, $tmpInicial, '".$row['note']."'],
+";  
+                }
+                
+            //}
+            $last = $row['score'];
+            $lastdate = $row['date'];
+        }
+        $google.="
+            ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_statistic$module'));
+            
+var formatter = new google.visualization.ColorFormat();
+formatter.addRange(" . getstat($module) . ", 1000, 'white', 'red');
+formatter.addRange(null, " . getstat($module) . ", 'black', '#33ff33');
+formatter.format(data, 4); // Apply formatter to second column
+
+        table.draw(data, {showRowNumber: true, allowHtml: true, page: event, pageSize: $lastStatistics, startPage: ".$page/$lastStatistics."});
+      }
+    </script>
+    
+<div id=\"table_statistic$module\" ></div>";
+        echo "<fieldset><legend>$statisticsForDateSetLegendLang ${$module."Lang"}</legend> $google ";
+        //echo getstat(module);
+    echo $sum. $unit;
+    echo" $statisticsDataSet1Lang ";
+    //echo $sumDays . $statistics2Lang . getstat($module) . $unit .".";
+    echo $sumDays . $statisticsDataSet2Lang . round(($sum/$sumDays), 2) . $unit. $statisticsDataSet3Lang . getstat($module) . $unit .".";
+    
+//SELECT * FROM `gas` WHERE `date` BETWEEN '2017-01-01' AND '2017-03-31';
+}
+

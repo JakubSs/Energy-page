@@ -94,6 +94,16 @@ $dailyAverageFromLastLang="Daily average from last record";
 $statistics1Lang=" for ";
 $statistics2Lang=" days, with daily average: ";
 
+$statisticsDataSet1Lang=$statistics1Lang;
+$statisticsDataSet2Lang=" days, daily average from selected dates: ";
+$statisticsDataSet3Lang=" and with summary daily average: ";
+$statisticsForDateSetLang="Statistics from selected dates";
+$statisticsForDateFromLang="From";
+$statisticsForDateToLang="To";
+$statisticsSelectModuleLang="Select energy: ";
+$statisticsSubmitLang="Show statistics";
+$statisticsForDateSetLegendLang="Selected statistics for ";
+
 $temperatureLang="Temperature";
 
 $footerLang="This is energy page version $version made by $Author with release date ". $releaseDate .". My page is <a href='$link'>$link</a>";
@@ -110,6 +120,12 @@ $priceForGasKwhLang="Price for kWh of Gas";
 
 $priceForPlaceMonthlyEELang="Price for sale point (ee)";
 $priceForEEKwhLang='Price for kWh of ee';
+
+$priceForPlaceMonthlyWaterLang="Monthly price for sale point (water)";
+$priceForM3WaterLang='Price for m<sup>3</sup> of water';
+
+$priceForPlaceMonthlyHotWaterLang="Monthly price for sale point (hot water)";
+$priceForM3HotWaterLang='Price for m<sup>3</sup> of hot water';
 
 $countPriceLang="Count price?";
 $yearlyPriceLang="Premise of year invoice";

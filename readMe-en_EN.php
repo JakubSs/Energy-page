@@ -24,4 +24,7 @@
 <p>- added support for temperature into statistics (for now, import from meteo.ajtyk.sk)</p>
 <p>- graph of temperatures</p>
 <p>- premise of year invoice</p>
+<p>2.5:</p>
+<p>- added support for showing statistics for selected date range</p>
+<p>- added support for counting yearly price for water and hot water</p>
 </div>

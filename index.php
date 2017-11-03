@@ -77,6 +77,7 @@ if (verificate() == false) {
         echo "<div class=\"dropdown\">
   <button class=\"dropbtn\">$statisticsLang</button>
   <div class=\"dropdown-content\">";
+        echo "<a href='index.php?dateSetForm=true'>$statisticsForDateSetLang</a>";
         foreach ($modules as &$modul) {
             $energyTemp=$modul;
             echo "<a href='index.php?stat=" . $modul . "'>$statisticsForLang" . ${$energyTemp."Lang"} . "</a>";
@@ -119,7 +120,8 @@ if (verificate() == false) {
         editConfigSave($_POST["dbname"], $_POST["dbserver"], $_POST["dbuser"], $_POST["dbpass"], $_POST["gas"], $_POST["ee"], $_POST["water"], $_POST["hotWater"],
                 $_POST["secret"], $_POST["lastStatistics"], $_POST["language"], $_POST["temperature"], $_POST["countPrice"],
                 $_POST["priceForPlaceMonthlyGas"], $_POST["gasToKwh"], $_POST["priceForGasKwh"], $_POST["priceForPlaceMonthlyEE"],
-                $_POST["priceForEEKwh"], $_POST["sourceOfTemperature"]);
+                $_POST["priceForEEKwh"], $_POST["sourceOfTemperature"], 
+                $_POST["priceForPlaceMonthlyWater"], $_POST["priceForM3Water"], $_POST["priceForPlaceMonthlyHotWater"], $_POST["priceForM3HotWater"]);
     }
     
     else if ($_GET["addRecord"] == true) {
@@ -169,6 +171,12 @@ if (verificate() == false) {
     }
     else if ($_GET["aboutMe"] == true) {
         aboutMe();
+    }
+    else if ($_GET["dateSetForm"] == true) {
+        getDateForStatisticsDateSet();
+    }
+    else if ($_GET["dateSet"] == true) {
+        getStatisticsFromDateSet($_POST["start"], $_POST["end"],$_POST['module']);
     }
     else {
         if (count($modules) > 0)

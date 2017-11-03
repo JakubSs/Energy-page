@@ -94,6 +94,17 @@ $dailyAverageFromLastLang="Denný priemer od posledného merania";
 $statistics1Lang=" za ";
 $statistics2Lang=" dní, s denným priemerom: ";
 
+$statisticsDataSet1Lang=$statistics1Lang;
+$statisticsDataSet2Lang=" dní, denný priemer z výberu: ";
+$statisticsDataSet3Lang=" a denný celkový priemer: ";
+$statisticsForDateSetLang="Štatistika podľa dátumu";
+$statisticsForDateFromLang="Od";
+$statisticsForDateToLang="Do";
+$statisticsSelectModuleLang="Vyberte energiu: ";
+$statisticsSubmitLang="Zobraz štatistiku";
+$statisticsForDateSetLegendLang="Vybraná štatistika pre ";
+
+
 $temperatureLang="Teplota";
 $sourceOfTemperatureLang="Zdroj teplôt";
 
@@ -111,6 +122,12 @@ $priceForGasKwhLang="Cena za kWh plynu";
 
 $priceForPlaceMonthlyEELang="Cena za obchodné miesto (elektrina)";
 $priceForEEKwhLang='Cena za kWh elektriny';
+
+$priceForPlaceMonthlyWaterLang="Mesačný poplatok za obchodné miesto (voda)";
+$priceForM3WaterLang='Cena za m<sup>3</sup> vody';
+
+$priceForPlaceMonthlyHotWaterLang="Mesačný poplatok obchodné miesto (teplá voda)";
+$priceForM3HotWaterLang='Cena za m<sup>3</sup> teplej vody';
 
 $countPriceLang="Počítať cenu?";
 $yearlyPriceLang="Predpoklad ročnej fa";

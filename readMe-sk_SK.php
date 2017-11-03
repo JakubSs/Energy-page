@@ -24,4 +24,7 @@
 <p>- pridaná podpora pre teplotu do štatistík (zatiaľ import z meteo.ajtyk.sk</p>
 <p>- graf priebehu teplôt</p>
 <p>- predpoklad platieb</p>
+<p>2.5:</p>
+<p>- pridaná možnosť zobraziť štatistiky pre vybraný dátum</p>
+<p>- pridanie možnosti pre výpočet nákladov pre vodu a teplú vodu</p>
 </div>
