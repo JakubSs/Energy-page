@@ -27,4 +27,6 @@
 <p>2.5:</p>
 <p>- pridaná možnosť zobraziť štatistiky pre vybraný dátum</p>
 <p>- pridanie možnosti pre výpočet nákladov pre vodu a teplú vodu</p>
+<p>2.6:</p>
+<p>- pridaná základná správa používateľov </p>
 </div>

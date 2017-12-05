@@ -160,6 +160,18 @@ function editConfigSave($dbname, $dbservername, $dbusername, $dbpassword, $modul
         $temperature, $countPrice, $priceForPlaceMonthlyGas, $gasToKwh, $priceForGasKwh, $priceForPlaceMonthlyEE, $priceForEEKwh, $sourceOfTemperature, $priceForPlaceMonthlyWater, $priceForM3Water, $priceForPlaceMonthlyHotWater, $priceForM3HotWater) {
     if (($dbname!="") && ($dbservername!="") && ($dbusername!="") && ($dbpassword!="") && ($secret!="") && ($lastStatistics!=""))
     {
+    if ($lastStatistics==""){$lastStatistics=10;}
+    if ($sourceOfTemperature==""){$sourceOfTemperature="https://meteo.ajtyk.sk/temperature.php";}
+    if ($priceForPlaceMonthlyGas==""){$priceForPlaceMonthlyGas=0;}
+    if ($gasToKwh==""){$gasToKwh=0;}
+    if ($priceForGasKwh==""){$priceForGasKwh=0;}
+    if ($priceForPlaceMonthlyEE==""){$priceForPlaceMonthlyEE=0;}
+    if ($priceForEEKwh==""){$priceForEEKwh=0;}
+    if ($priceForPlaceMonthlyWater==""){$priceForPlaceMonthlyWater=0;}
+    if ($priceForM3Water==""){$priceForM3Water=0;}
+    if ($priceForPlaceMonthlyHotWater==""){$priceForPlaceMonthlyHotWater=0;}
+    if ($priceForM3HotWater==""){$priceForM3HotWater=0;}
+    
     $availableModules = unserialize($_COOKIE['available']);
     $availableModulesNames = unserialize($_COOKIE['availableNames']);
     $myfile = fopen("config.php", "w") or die("Unable to open file!");
@@ -180,8 +192,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-11-03\";
-\$version = \"2.5\";
+\$releaseDate = \"2017-12-05\";
+\$version = \"2.6\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";
@@ -1381,3 +1393,101 @@ formatter.format(data, 4); // Apply formatter to second column
 //SELECT * FROM `gas` WHERE `date` BETWEEN '2017-01-01' AND '2017-03-31';
 }
 
+function existingUserShowTable()
+{    include("config.php");
+    include("$languagefile");
+
+        $sql = "SELECT * FROM users ORDER BY id ASC ";
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    } else {
+        $result = mysqli_query($con, $sql);
+        $google = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>
+    <script type=\"text/javascript\">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', '$usernameLang');
+        data.addColumn('string', '$emailLang');
+        data.addColumn('string', '$groupLang    ');
+        data.addColumn('string', '$noteLang');
+        data.addColumn('string', '$editLang');
+        data.addRows([
+";
+
+        while ($row = mysqli_fetch_array($result)) {
+
+            $google.="['".$row['username']."', "
+                    . "'".$row['email']."',"
+                    . "'".$row['groups']."', "
+                    . "'".$row['note']."', "
+                    . "'<form method=\"POST\" action=\"index.php?editUserForm=true\"><input id=\"button\" type=\"submit\" name=\"id\" value=\"".$row['id']."\"></form>'],
+";
+        }
+
+        $google.="]);
+
+        var table = new google.visualization.Table(document.getElementById('table_users'));
+
+        table.draw(data, {showRowNumber: true, allowHtml: true});
+      }
+    </script>
+    
+<div id=\"table_users\" ></div>";
+    }
+    echo "<fieldset ><legend>$allUsersLang :</legend> $google</fieldset>";
+    
+}
+
+function existingUserShow($id)
+{   include("config.php");
+    include("$languagefile");
+    $sql = "SELECT * FROM users WHERE id=$id";
+
+    if (mysqli_connect_errno($con)) {
+        echo "failed connection!";
+    }
+    $result = mysqli_query($con, $sql);
+    while ($row = mysqli_fetch_array($result)) {
+        echo "
+        <div align=\"center\"><fieldset style=\"width:30%\"><legend>$changeUserLang</legend>
+        <form method=\"POST\" action=\"index.php?editUserSave=true\">
+        $usernameLang *<br><input type=\"text\" name=\"username\" size=\"40\" placeholder=\"Enter username\" value=\"$row[username]\"><br>
+        $passwordLang *<br>Nemeň ak sa heslo nemení!<br><input type=\"password\" name=\"password\" size=\"40\" placeholder=\"Enter Password\" value=\"NotChanged\"><br><br>
+        $emailLang <br><input type=\"text\" name=\"email\" size=\"60\" placeholder=\"example@sedinar.eu\" value=\"$row[email]\"><br><br>
+        $noteLang <br><input type=\"text\" name=\"note\" size=\"60\" placeholder=\"Note\" value=\"$row[note]\"><br><br>
+        $groupLang <br><input type=\"number\" name=\"group\" size=\"40\" placeholder=\"$groupPlaceholderLang\" value=\"$row[groups]\"><br>
+        <input type=\"hidden\" name=\"id\" size=\"40\" value=\"$id\">            
+        <div align=\"center\"><input id=\"button\" type=\"submit\" name=\"submit\" value=\"$changeLang\"><div>
+        </form>
+        </fieldset><div>
+";
+    }
+    
+   }
+
+function existingUserSave($id, $username, $password, $email, $group, $note)
+{
+    include("config.php");
+    include("$languagefile");
+    if ($password!="NotChanged"){
+        $password.=$secret;
+        $password = md5($password);
+    }
+
+    if ($group == "")
+        $group = 1;
+    if ($password=="NotChanged"){
+    $sql = "UPDATE users SET username='$username', email='$email', groups='$group', note='$note' WHERE id='$id'";}
+    else
+    $sql = "UPDATE users SET username='$username', password='$password', email='$email', groups='$group', note='$note' WHERE id='$id'";
+
+        if (!mysqli_query($con, $sql)) {
+            die('Error: ' . mysqli_error($con));
+        } else
+            echo "<br>".$recordSucessfullyAlteredLang;
+    
+}

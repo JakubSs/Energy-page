@@ -12,8 +12,9 @@ $homeLang="Home";
 
 $headingLang="Energy page for database $dbname";
 $SystemLang="System:";
+$logedinLang="Logged user: ";
 $logoutLang="Logout ";
-$changePasswordLang="Change password";
+$changePasswordLang="Change my password";
 $editConfigurationLang="Edit configuration";
 $addUser="Add user";
 $FunctionsLang="Functions:";
@@ -129,3 +130,6 @@ $priceForM3HotWaterLang='Price for m<sup>3</sup> of hot water';
 
 $countPriceLang="Count price?";
 $yearlyPriceLang="Premise of year invoice";
+
+$allUsersLang="All users";
+$changeUserLang="Change user: ";

@@ -33,10 +33,11 @@ if (isset($_COOKIE["needReload"])) {
     <body><div align="center">
             <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
-              <div style="text-align: center;">
-                  <span class="brand" style="float: none;"><?php echo $headingLang ?></span>
+              
+              <span style="float: right;"><?php echo $logedinLang.$_COOKIE[name]; ?></span><br>
+                  <span class="brand" style="float: none;"><?php echo $headingLang; ?></span>
                   <?php echo "<a href='/'><img src='$logo' height='50px'></a><br>"; ?>
-              </div>
+              
           </div>
       </div>
             
@@ -55,6 +56,7 @@ if (verificate() == false) {
   <div class=\"dropdown-content\">
   <a href='index.php'>$homeLang</a>
    <a href='index.php?logout=true'>$logoutLang $_COOKIE[name]</a>
+   <a href='index.php?editUserAll=true'>$allUsersLang</a>
    <a href='index.php?passchange=true'>$changePasswordLang</a>
    <a href='index.php?editConfig=true'>$editConfigurationLang</a>
    <a href='index.php?adduser=true'>$addUser</a></td></tr>
@@ -177,6 +179,16 @@ if (verificate() == false) {
     }
     else if ($_GET["dateSet"] == true) {
         getStatisticsFromDateSet($_POST["start"], $_POST["end"],$_POST['module']);
+    }
+    else if ($_GET["editUserAll"] == true) {
+        existingUserShowTable();
+    }
+    else if ($_GET["editUserForm"] == true) {
+        existingUserShow($_POST["id"]);
+        
+    }
+    else if ($_GET["editUserSave"] == true) {
+    existingUserSave($_POST["id"], $_POST["username"], $_POST["password"], $_POST["email"], $_POST["group"], $_POST["note"]);        
     }
     else {
         if (count($modules) > 0)

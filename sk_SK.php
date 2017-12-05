@@ -11,8 +11,9 @@ $homeLang="Domov";
 
 $headingLang="Stránka spotreby energií, databáza $dbname";
 $SystemLang="Systémové:";
+$logedinLang="Príhlásaný používateľ: ";
 $logoutLang="Odhlásiť ";
-$changePasswordLang="Zmeniť heslo";
+$changePasswordLang="Zmeniť moje heslo";
 $editConfigurationLang="Upraviť nastavnia";
 $addUser="Pridať používateľa";
 $FunctionsLang="Funkcie";
@@ -131,3 +132,6 @@ $priceForM3HotWaterLang='Cena za m<sup>3</sup> teplej vody';
 
 $countPriceLang="Počítať cenu?";
 $yearlyPriceLang="Predpoklad ročnej fa";
+
+$allUsersLang="Všetci používatelia";
+$changeUserLang="Zmeň používateľa: ";

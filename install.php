@@ -60,8 +60,8 @@ require_once(\"\$languagefile\");
 \$lastStatistics = $lastStatistics;
 
 \$secret = \"$secret\";
-\$releaseDate = \"2017-11-03\";
-\$version = \"2.5\";
+\$releaseDate = \"2017-12-05\";
+\$version = \"2.6\";
 \$Author = \"Jakub Sedinar - Sedinar.EU\";
 \$link = \"https://sedinar.eu\";
 \$logo = \"https://sedinar.eu/logo.png\";

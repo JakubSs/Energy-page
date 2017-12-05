@@ -27,4 +27,6 @@
 <p>2.5:</p>
 <p>- added support for showing statistics for selected date range</p>
 <p>- added support for counting yearly price for water and hot water</p>
+<p>2.6:</p>
+<p>- basic user management</p>
 </div>

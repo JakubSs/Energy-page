@@ -1,2 +1,2 @@
-00 * * * *     root  /usr/bin/wget -O - -q -t 1 https://***yourHostname***/saveTemperature.php
+00 * * * *     root  /usr/bin/wget -O - -q -t 1 https://energie.sedinar.eu/saveTemperature.php
  

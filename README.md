@@ -24,3 +24,8 @@ Release Notes
 - added support for temperature into statistics (for now, import from meteo.ajtyk.sk)
 - graph of temperatures
 - premise of year invoice
+2.5:
+- added support for showing statistics for selected date range
+- added support for counting yearly price for water and hot water
+2.6:
+- basic user management
